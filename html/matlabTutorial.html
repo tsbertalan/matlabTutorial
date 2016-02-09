@@ -1,0 +1,937 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>MATLAB Tutorial for Differential Equations</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-02-09"><meta name="DC.source" content="matlabTutorial.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>MATLAB Tutorial for Differential Equations</h1><!--introduction--><p><b>DISCLAIMER</b> Almost everything you can do in MATLAB, you can do in Python, for free, with the addition of the packages NumPy, SciPy, and Matplotlib (and SymPy for the symbolic stuff). While MATLAB may be free to you now while you're a student, it may not be once you graduate. MATLAB is, as its name suggests, best suited to matrix computations. It is not a very good general-purpose programming language, and many of its misfeatures are baked in by a need for backwards compatibility with 32 years worth of legacy scripts. While MATLAB is still the most commonly used language in many regions of academia, you may want to investigate other languages if you decide you want to do any programming outside of this class.</p><p>The script which generates this document is uploaded at <a href="http://github.com/tsbertalan/matlabTutorial">http://github.com/tsbertalan/matlabTutorial</a>.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Basics</a></li><li><a href="#11">Arrays</a></li><li><a href="#24">Basic plotting</a></li><li><a href="#27">Functions vs scripts</a></li><li><a href="#33">Numerical integration of systems of ODEs</a></li><li><a href="#38">Symbolic computation</a></li><li><a href="#46">Debugging</a></li></ul></div><h2>Basics<a name="1"></a></h2><p>Statements can be closed with a semicolon,</p><pre class="codeinput">x = 3*4;
+</pre><p>or left unclosed, in which case they will print when evaluated.</p><pre class="codeinput">x = 3*4
+</pre><pre class="codeoutput">
+x =
+
+    12
+
+</pre><p>Most basic operations act as you'd expect.</p><pre class="codeinput">3 + 6 - 2 * 3 / 9
+</pre><pre class="codeoutput">
+ans =
+
+    8.3333
+
+</pre><p>However, you may sometimes want to use elementwise operations with matrix arguments, particularly for multiplication and exponentiation. This is done by preceeding the operations with a period.</p><pre class="codeinput">x = [1, 2, 3];
+y = [4, 5, 6];
+<span class="comment">%x^y  % fails</span>
+x .^ y
+</pre><pre class="codeoutput">
+ans =
+
+     1    32   729
+
+</pre><p>Longer statements can be broken across several lines with an ellipsis <tt>...</tt>. Whitespace is not syntactic.</p><pre class="codeinput">x = 3 * 9 + 4 <span class="keyword">...</span>
+    /32 +(<span class="keyword">...</span>
+          5 / 3 + 6 <span class="keyword">...</span>
+         );
+</pre><p>Loops can be written with <tt>for</tt> or <tt>while</tt>. You'll probably find <tt>for</tt> more useful.</p><pre class="codeinput"><span class="keyword">for</span> x=1:10
+    y = x*2;
+<span class="keyword">end</span>
+
+x = 1;
+<span class="keyword">while</span> x &lt;= 10
+    y = x*2;
+    x = x + 1;
+<span class="keyword">end</span>
+
+xvalues = [1 4 12 6];
+total = 0;
+<span class="keyword">for</span> x=xvalues
+    total = total + x;
+<span class="keyword">end</span>
+</pre><p>The <tt>disp</tt> command can be used for explicitly printing things. Or <tt>fprintf</tt> can be used for more control.</p><pre class="codeinput">disp(total)
+fprintf(<span class="string">'%.2f'</span>, sum(xvalues));
+</pre><pre class="codeoutput">    23
+
+23.00</pre><p>In the MATLAB Desktop, you can get help for most commands and functions by placing your edit cursor in the command and pressing F1. The help for <tt>fprintf</tt> looks like this on my machine:</p><p><img vspace="5" hspace="5" src="fprintfHelp.png" alt=""> </p><p>Standard flow control constructs are available.</p><pre class="codeinput">x = sqrt(2);
+<span class="keyword">if</span> x &lt; 2
+    disp(<span class="string">'less'</span>);
+<span class="keyword">elseif</span> true == false
+    disp(<span class="string">'impossible'</span>);
+<span class="keyword">else</span>
+    disp(<span class="string">'greater'</span>);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">less
+</pre><p>You can also use <tt>switch</tt> statements if you think they're warranted.</p><pre class="codeinput">option = <span class="string">'abcdefg'</span>;
+<span class="keyword">switch</span> option
+    <span class="keyword">case</span> <span class="string">'abcdefg'</span>
+        disp(<span class="string">'alphabet'</span>);
+    <span class="keyword">case</span> 42
+        disp(<span class="string">'meaning of life'</span>);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">alphabet
+</pre><h2>Arrays<a name="11"></a></h2><p>Matlab arrays are always at least two-dimensional. So, "vectors" are always either single-row or single-column matrices. You can inspect the dimensions of an array with the <tt>size</tt> command.</p><pre class="codeinput">nValues = 1:10;
+size(nValues)
+</pre><pre class="codeoutput">
+ans =
+
+     1    10
+
+</pre><p>You can transpose a matrix with either an apostrophe or the <tt>transpose</tt> command.</p><pre class="codeinput">size(nValues')
+<span class="comment">%size(transpose(nValues))  % (same thing)</span>
+</pre><pre class="codeoutput">
+ans =
+
+    10     1
+
+</pre><p>You can compose arrays explicitly with commas, spaces, and semicolons. Commas and spaces are used to separate values within the same row, and semicolons are used to separate values in different rows.</p><pre class="codeinput">A = [1 2 3; 4 5 6]
+B = [7, 8, 9; 1, 2, 3]
+C = [4, 6 2; 5, 8 2]  <span class="comment">% This is pretty ugly.</span>
+</pre><pre class="codeoutput">
+A =
+
+     1     2     3
+     4     5     6
+
+
+B =
+
+     7     8     9
+     1     2     3
+
+
+C =
+
+     4     6     2
+     5     8     2
+
+</pre><p>Ranges of values can be generated with the <tt>START:INCREMENT:STOP</tt> syntax.</p><pre class="codeinput">2:3:12
+</pre><pre class="codeoutput">
+ans =
+
+     2     5     8    11
+
+</pre><p>If you leave out <tt>INCREMENT</tt>, it defaults to one.</p><pre class="codeinput">2:12
+</pre><pre class="codeoutput">
+ans =
+
+     2     3     4     5     6     7     8     9    10    11    12
+
+</pre><p>You can reshape arrays, possibly changing the number of dimensions.</p><pre class="codeinput">reshape(1:12, 3, 4)
+reshape(1:12, 4, 3)
+</pre><pre class="codeoutput">
+ans =
+
+     1     4     7    10
+     2     5     8    11
+     3     6     9    12
+
+
+ans =
+
+     1     5     9
+     2     6    10
+     3     7    11
+     4     8    12
+
+</pre><p>Higher-dimensional arrays are also possible, if its  useful for the organization of your problem.</p><pre class="codeinput">threeDeeArray = reshape(1:12, 2, 3, 2)
+</pre><pre class="codeoutput">
+threeDeeArray(:,:,1) =
+
+     1     3     5
+     2     4     6
+
+
+threeDeeArray(:,:,2) =
+
+     7     9    11
+     8    10    12
+
+</pre><p>You can index an array explicitly.</p><pre class="codeinput">threeDeeArray(1, 3, 2) = 42;
+</pre><p>The <tt>end</tt> keyword stands for last entry.</p><pre class="codeinput">threeDeeArray(1, end, 2)
+</pre><pre class="codeoutput">
+ans =
+
+    42
+
+</pre><p>You can also flatten multidimensional arrays back to a column-vector (transposed here for space).</p><pre class="codeinput">flattened = threeDeeArray(:)'
+flattened(11)
+<span class="comment">%%hold all;</span>
+<span class="comment">% Arrays can also be indexed by slices</span>
+threeDeeArray(1, :, :)
+</pre><pre class="codeoutput">
+flattened =
+
+     1     2     3     4     5     6     7     8     9    10    42    12
+
+
+ans =
+
+    42
+
+
+ans(:,:,1) =
+
+     1     3     5
+
+
+ans(:,:,2) =
+
+     7     9    42
+
+</pre><p>or by an array of indices.</p><pre class="codeinput">indices = find(threeDeeArray(1, 3, :) == 42)
+threeDeeArray(1, 3, indices)
+</pre><pre class="codeoutput">
+indices =
+
+     2
+
+
+ans =
+
+    42
+
+</pre><p>One of the major shortcomings of MATLAB is its lack of true lists--the closest you can come is by extending an array row-by-row or colum-by-column. This imposes a performance penalty, as the entire array is recopied every time. But it can sometimes be worth it for assembling small "stacks"hold all;.</p><pre class="codeinput">x = [];
+y = [];
+<span class="keyword">for</span> i=1:10
+    x = [x; i];
+    y = [y, i*2];
+<span class="keyword">end</span>
+size(x)
+size(y)
+</pre><pre class="codeoutput">
+ans =
+
+    10     1
+
+
+ans =
+
+     1    10
+
+</pre><p>Multiplying two matrices the <tt>*</tt> operator rather than the <tt>.*</tt> operator performs matrix multiplication, so the number of columns of the first matrix must match the number of rows of the second.</p><pre class="codeinput">A = [1 2; 3 4];
+u = [5; 6];
+b = A * u
+</pre><pre class="codeoutput">
+b =
+
+    17
+    39
+
+</pre><h2>Basic plotting<a name="24"></a></h2><p>It's good practice to initialize a figure with a call to <tt>figure</tt>. This command will return a handle that you can use later as in input to the same command to make the same figure active again.</p><p>To put multiple objects on the same plot, issue a <tt>hold on</tt> command after making your figure active. This prevents new plotted objects from replacing the previous ones.</p><p>2D line plots can be made with the <tt>plot</tt> command. Like all commands in this tutorial, nice documentation for this command is available with F1. Plots can be decorated with commands like <tt>title</tt>, <tt>xlabel</tt>, <tt>ylabel</tt>, <tt>ylim</tt>, or <tt>legend</tt>. Again, the built in help browser, or just Google, can be very useful for finding the names and syntax for less commonly\ used commands.</p><pre class="codeinput">figureHandle = figure();
+
+hold <span class="string">all</span>;
+
+x = -3:.01:3;
+plot(x, ones(size(x)), <span class="string">'k-'</span>);
+plot(x, x, <span class="string">'g.'</span>);
+plot(x, x.^2 - 1, <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="string">'LineWidth'</span>, 4);
+plot(x, x.^3 - 3*x, <span class="string">'b-.'</span>, <span class="string">'LineWidth'</span>, 2);
+ylim([-5, 5]);
+
+title(<span class="string">'First four Probabilists'' Hermite polynomials'</span>);
+xlabel(<span class="string">'x'</span>);
+ylabel(<span class="string">'H_i(x)'</span>);
+legend(<span class="string">'i=0'</span>, <span class="string">'i=1'</span>, <span class="string">'i=2'</span>, <span class="string">'i=3'</span>);
+</pre><img vspace="5" hspace="5" src="matlabTutorial_01.png" alt=""> <p>You can make scatterplots with the <tt>scatter</tt> command.</p><p>3D plots are possible with commands such as <tt>scatter3</tt>, or surf</p><pre class="codeinput">figure(); hold <span class="string">all</span>;
+[X,Y,Z] = peaks(25);
+surf(X,Y,Z);
+view(49, 18);  <span class="comment">% Set the view angle.</span>
+
+<span class="comment">% We can make a 3D scatterplot fairly intuitively, though formatting</span>
+<span class="comment">% options can get Byzantine.</span>
+Zrand = rand(numel(Z), 1);
+Zrand = Zrand * (max(Z(:)) - min(Z(:)));
+Zrand = Zrand - mean(Zrand);
+<span class="comment">% Arguments are (x, y, z, size, (variable for color mapping)):</span>
+scatter3(X(:), Y(:), Zrand, 12, Zrand)
+
+<span class="comment">% You can also plot curves in 3D, FWIW.</span>
+theta = 0:.1:10*pi;
+r = sqrt(<span class="keyword">...</span>
+        max(abs(X(:)))^2 <span class="keyword">...</span>
+        + <span class="keyword">...</span>
+        max(abs(Y(:)))^2 <span class="keyword">...</span>
+        );
+x = r*cos(theta);
+y = r*sin(theta);
+z = linspace(min(Z(:)), max(Z(:)), numel(theta));
+plot3(x, y, z, <span class="string">'Color'</span>, <span class="string">'red'</span>);
+</pre><img vspace="5" hspace="5" src="matlabTutorial_02.png" alt=""> <h2>Functions vs scripts<a name="27"></a></h2><p>This file us a MATLAB script--a series of statments, perhaps separated into cells by comment lines beginning with two <tt>%</tt> symbols. Incidentally, these cells can be evaluated one-by-one with the default <tt>Ctrl+Enter</tt> keyboard shortcut, similar to the <tt>Shift+Enter</tt> shortcut in Mathematica.</p><p>However, to do something a little more like real programming in Matlab, you'll want functions. Functions need to be defined in a separate <tt>*.m</tt> file. (Nested functions are possible, but not in scripts. It appears that classes can only be defined in their own files, not nested.)</p><p>I made a small example file to accompany this tutorial, called <tt>squareInputValue.m</tt>. It looks something like this:</p><pre class="language-matlab"><span class="keyword">function</span> outputValue = squareInputValue(inputValue)
+    outputValue = inputValue .^ 2;
+<span class="keyword">end</span>
+</pre><pre class="codeinput">squareInputValue(2)
+</pre><pre class="codeoutput">
+ans =
+
+     4
+
+</pre><p>If you have to do slightly larger-scale programming in MATLAB, you may be interested in reading about its rudimentary object-orientation (look up <tt>classdef</tt> in the help), and package management (see <tt>import</tt>, and Google) capabilities.</p><p>Functions that can operate without arguments, such as the built-in rand, can be called without parenthases, although I personally dislike this style.</p><pre class="codeinput">x = rand();
+y = rand;
+z = x - y;
+</pre><p>If your function can be performed in a single statement, like our squareInputValue example, you can write it as an anonymous function</p><pre class="codeinput">f = @(x) x.^2;
+f(2)
+</pre><pre class="codeoutput">
+ans =
+
+     4
+
+</pre><p>The syntax is</p><pre>|IDENTIFIER = @(ARG1 [, ARG2, ARG3, etc]) (statement with the given value(s) of ARG1(...))|</pre><p>This is similar to Python's <tt>lambda</tt> keyword, where this function would be</p><pre>f = lambda x: x**2</pre><p>In some contexts, such as when integrating ODEs (see below) a function handle is desired. Unlike in Python, where both <tt>squareInputValue</tt> and <tt>f</tt> would be callable objects at this point, attempts to use <tt>squareInputValue</tt> as an object at this point would be interpreted as calls without arguments (due to the previously mentioned regrettable no-parenthases no-arguments optional syntax), and would result in the error</p><pre>Error using squareInputValue (line 2)
+Not enough input arguments.</pre><p>You can create a function handle to pass to other functions by prepending an @ symbol. The anonymous function f is already a function handle.</p><pre class="codeinput">squaringHandle = @squareInputValue;
+squaringHandle(2)
+</pre><pre class="codeoutput">
+ans =
+
+     4
+
+</pre><h2>Numerical integration of systems of ODEs<a name="33"></a></h2><p>While you can write your own numerical integration routines, and schemes like forward Euler can be implemented directly in your script without much difficulty, MATLAB includes several built-in integrators to make your life easier. These are particulary useful when integrating stiff systems of ODEs, where error or stepsize control is required, and schemes such as forward Euler might fail spectacularly.</p><p>Lets define a simple 1D ODE. The built-in integrators expect your right-hand-side (RHS) function to take two arguments, the current time, and the current state. This allows you to have time-dependent effects, such as nonautomous forcing. For now, we'll just ignore the t argument.</p><pre class="codeinput">dxdt = @(t, x) (4 - x) * (2 - x);
+</pre><p>Integrators vary in their required arguments, but they generally require a handle to a RHS function, a time range, and an initial condition, and return a set trajectory as a sequence of points, and corresponding times (or or however you interpret the independent variable). Here, we'll use a Runge-Kutta method of order 4(5), and plot the resulting trajectory.</p><pre class="codeinput">timeRange = [0, 6];
+initialCondition = 3.99;
+[T, X] = ode45(dxdt, timeRange, initialCondition);
+figure();
+plot(T, X);
+xlabel(<span class="string">'t'</span>);
+ylabel(<span class="string">'x(t)'</span>);
+</pre><img vspace="5" hspace="5" src="matlabTutorial_03.png" alt=""> <p>We can also use a pair of linear ODEs.</p><p><img src="matlabTutorial_eq08330.png" alt="$$\frac{dx}{dt} = 3   (1/2 - x) + 1/2 (-1/4 - y)$$"></p><p><img src="matlabTutorial_eq62223.png" alt="$$\frac{dy}{dt} = 1/3 (1/2 - x) + 6   (-1/4 - y)$$"></p><pre class="codeinput">A = [3,   1/2; <span class="keyword">...</span>
+     1/3, 6   ];
+XYfixed = [1/2; -1/4];
+rhs = @(t, XY) A * (XYfixed - reshape(XY, 2, 1));
+</pre><p>Let's start with a bunch of random initial conditions.</p><pre class="codeinput">numTrajectories = 80;
+times = 0:.01:10;
+trajectories = zeros(numel(times), 2, numTrajectories);
+<span class="keyword">for</span> replicate=1:numTrajectories
+    initialCondition = rand(2, 1) * 2 - 1;
+    [times, states] = ode45(rhs, times, initialCondition);
+    trajectories(:, :, replicate) = states;
+<span class="keyword">end</span>
+</pre><p>Let's plot those trajectories. However, we're going to add an extra feature--to visualize the vector field, we'll plot a quiver of arrows pointing in the direction of the vector field for a grid of points in the X-Y plane. Note that we use the function <tt>meshgrid</tt> to create a repeating grid of rows of <img src="matlabTutorial_eq43551.png" alt="$x$"> values and columns of <img src="matlabTutorial_eq44020.png" alt="$y$"> values, then evaluate the intersections of these rows and values to get <img src="matlabTutorial_eq51622.png" alt="$u=dx/dt$"> and <img src="matlabTutorial_eq95494.png" alt="$v=dy/dt$">.</p><pre class="codeinput">figure(); hold <span class="string">on</span>;
+<span class="keyword">for</span> replicate=1:numTrajectories
+    states = trajectories(:, :, replicate);
+    scatter(states(1, 1), states(1, 2), 32, <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+            <span class="string">'MarkerEdgeColor'</span>, <span class="string">'black'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'black'</span>);
+    scatter(states(end, 1), states(end, 2), 100, <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+            <span class="string">'MarkerEdgeColor'</span>, <span class="string">'black'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'white'</span><span class="keyword">...</span>
+            );
+    plot(states(:, 1), states(:, 2), <span class="string">'k'</span>);
+<span class="keyword">end</span>
+[X, Y] = meshgrid(-1:.25:1, -1:.25:1);
+gridShape = size(X);
+U = zeros(size(X));
+V = zeros(size(X));
+<span class="keyword">for</span> i=1:gridShape(1)
+    <span class="keyword">for</span> j=1:gridShape(2)
+        uv = rhs(0, [X(i,j); Y(i,j)]);
+        U(i,j) = uv(1);
+        V(i,j) = uv(2);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+quiver(X, Y, U, V, <span class="string">'Color'</span>, <span class="string">'red'</span>);
+xlabel(<span class="string">'x'</span>);
+ylabel(<span class="string">'y'</span>);
+title(<span class="string">'Trajectories move from black to white points.'</span>);
+</pre><img vspace="5" hspace="5" src="matlabTutorial_04.png" alt=""> <h2>Symbolic computation<a name="38"></a></h2><p>Your version of MATLAB might include support for symbolic computation. While Mathematica is a more common choice for doing symbolic computations, we'll go through a couple examples here to introduce the MATLAB equivalent.</p><p>using syntax which is strangely divergent from normal MATLAB code, we can declare an abstract function.</p><pre class="codeinput">syms <span class="string">f(x)</span>
+f
+x
+</pre><pre class="codeoutput"> 
+f(x) =
+ 
+f(x)
+ 
+ 
+x =
+ 
+x
+ 
+</pre><p>If we had done this with the command</p><pre class="language-matlab">syms <span class="string">f(x)</span>
+</pre><p>instead, the function f would have been declared, but not x.</p><p>Note that our function does not yet have an associated expression. We can add that with a new syntax that looks disturbingly like the illegal action of assigning to a function evaluation.</p><pre class="codeinput">f(x) = x^3*sin(x)
+</pre><pre class="codeoutput"> 
+f(x) =
+ 
+x^3*sin(x)
+ 
+</pre><p>We can differentiate this.</p><pre class="codeinput">diff(f, x, 2)
+</pre><pre class="codeoutput"> 
+ans(x) =
+ 
+6*x^2*cos(x) - x^3*sin(x) + 6*x*sin(x)
+ 
+</pre><p>( Note that, usually, the <tt>diff</tt> function is used for computing successive differences in a vector of values. Because MATLAB packages and namespaces are a relatively "new" feature (added in version 2008a), much of the MATLAB standard libraries simply dump their functions into the global namespace, and use complicated contextual rules to decide precedence, if they don't simply shadow each other. )</p><pre class="codeinput">vec = [1 5 6];
+diff(vec)
+</pre><pre class="codeoutput">
+ans =
+
+     4     1
+
+</pre><p>Using a further unintuitive abuse of notation, we can use the Symbolic Math Toolbox to integrate, for example, a first-order linear ODE.</p><pre class="codeinput">syms <span class="string">y(t)</span> <span class="string">b</span>
+y(t) = dsolve(diff(y) == -t*y, y(0) == b)
+f = symfun(y(t), [b, t])
+</pre><pre class="codeoutput"> 
+y(t) =
+ 
+b*exp(-t^2/2)
+ 
+ 
+f(b, t) =
+ 
+b*exp(-t^2/2)
+ 
+</pre><p>Plot this function.</p><pre class="codeinput">figure();
+tvals = 0:.1:4;
+bval = 1.0;
+plot(tvals, f(bval, tvals));
+title(strcat(<span class="string">'y(t)='</span>, char(y(t)), sprintf(<span class="string">'  b=%.1f'</span>, bval)));
+xlabel(<span class="string">'t'</span>);
+ylabel(<span class="string">'y'</span>);
+</pre><img vspace="5" hspace="5" src="matlabTutorial_05.png" alt=""> <p>This example is taken nearly directly from the help files; for more information and tutorials, open the MATLAB desktop Help Browser, and search for "Symbolic Computation".</p><h2>Debugging<a name="46"></a></h2><p>It's often useful to inspect the state of a program at a particular point deep in a called function. To this end, you can set break points in the by clicking the <tt>-</tt> sign in the left margin of a line in the editor, to the right of the line numbers.</p><p><img vspace="5" hspace="5" src="setBreakpoint.png" alt=""> </p><p>When you run a script which calls this code, assuming you did not call <tt>clear all</tt>, which clears both variables and breakpoints, the interpreter will stop when this line is reached, and indicate this state with both a green arrow in the margin of this code ...</p><p><img vspace="5" hspace="5" src="atBreakpoint.png" alt=""> </p><p>... and a <tt>K</tt> before your interactive prompt in the Command Window.</p><p><img vspace="5" hspace="5" src="commandWindowDebugging.png" alt=""> </p><p>At this point, you can <tt>disp</tt> out or modify variables and expressions. In newer versions of MATLAB, the "EDITOR" tab will contain buttons for continuing to the next breakpoint, stepping to the next line of code, stepping into the function about to be called, etc.</p><p><img vspace="5" hspace="5" src="debugButtons.png" alt=""> </p><p>To quit debug mode, either prese the continue button (or keyboard shortcut) (and possibly also clear your breakpoints), press the "Quit Debugging" button, or enter the command <tt>dbquit</tt> in thie Command Window.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% MATLAB Tutorial for Differential Equations
+% *DISCLAIMER*
+% Almost everything you can do in MATLAB, you can do in Python, for free,
+% with the addition of the packages NumPy, SciPy, and Matplotlib (and SymPy
+% for the symbolic stuff). While MATLAB may be free to you now 
+% while you're a student, it may not be once you
+% graduate. MATLAB is, as its name suggests, best suited to matrix
+% computations. It is not a very good general-purpose programming language,
+% and many of its misfeatures are baked in by a need for backwards
+% compatibility with 32 years worth of legacy scripts.
+% While MATLAB is still the most commonly used language in many
+% regions of academia, you may want to investigate other languages if you
+% decide you want to do any programming outside of this class.
+%
+% The script which generates this document is uploaded at
+% <http://github.com/tsbertalan/matlabTutorial>.
+
+%% Basics
+% Statements can be closed with a semicolon,
+x = 3*4;
+%%
+% or left unclosed, in which case they will print when evaluated.
+x = 3*4
+%%
+% Most basic operations act as you'd expect.
+3 + 6 - 2 * 3 / 9
+%%
+% However, you may sometimes want to use elementwise operations with matrix
+% arguments, particularly for multiplication and exponentiation.
+% This is done by preceeding the operations with a period.
+x = [1, 2, 3];
+y = [4, 5, 6];
+%x^y  % fails
+x .^ y
+%%
+% Longer statements can be broken across several lines with an ellipsis
+% |...|. Whitespace is not syntactic.
+x = 3 * 9 + 4 ...
+    /32 +(...
+          5 / 3 + 6 ...
+         );
+         
+
+%%
+% Loops can be written with |for| or |while|. You'll probably find |for|
+% more useful.
+for x=1:10
+    y = x*2;
+end
+
+x = 1;
+while x <= 10
+    y = x*2;
+    x = x + 1;
+end
+
+xvalues = [1 4 12 6];
+total = 0;
+for x=xvalues
+    total = total + x;
+end
+
+%%
+% The |disp| command can be used for explicitly printing things. Or
+% |fprintf| can be used for more control.
+disp(total)
+fprintf('%.2f', sum(xvalues));
+
+%%
+% In the MATLAB Desktop, you can get help for most commands and functions
+% by placing your edit cursor in the command and pressing F1. The help for
+% |fprintf| looks like this on my machine:
+% 
+% <<fprintfHelp.png>>
+% 
+
+%%
+% Standard flow control constructs are available.
+x = sqrt(2);
+if x < 2
+    disp('less');
+elseif true == false
+    disp('impossible');
+else
+    disp('greater');
+end
+
+%%
+% You can also use |switch| statements if you think they're warranted.
+option = 'abcdefg';
+switch option
+    case 'abcdefg'
+        disp('alphabet');
+    case 42
+        disp('meaning of life');
+end
+        
+
+
+%% Arrays
+% Matlab arrays are always at least two-dimensional. So, "vectors" are
+% always either single-row or single-column matrices. You can inspect the
+% dimensions of an array with the |size| command.
+nValues = 1:10;
+size(nValues)
+
+%%
+% You can transpose a matrix with either an apostrophe or the |transpose|
+% command.
+size(nValues')
+%size(transpose(nValues))  % (same thing)
+
+%%
+% You can compose arrays explicitly with commas, spaces, and semicolons.
+% Commas and spaces are used to separate values within the same row, and
+% semicolons are used to separate values in different rows.
+A = [1 2 3; 4 5 6]
+B = [7, 8, 9; 1, 2, 3]
+C = [4, 6 2; 5, 8 2]  % This is pretty ugly.
+
+%%
+% Ranges of values can be generated with the |START:INCREMENT:STOP| syntax.
+2:3:12
+%%
+% If you leave out |INCREMENT|, it defaults to one.
+2:12
+
+%%
+% You can reshape arrays, possibly changing the number of dimensions.
+reshape(1:12, 3, 4)
+reshape(1:12, 4, 3)
+
+%%
+% Higher-dimensional arrays are also possible, if its  useful for the
+% organization of your problem.
+threeDeeArray = reshape(1:12, 2, 3, 2)
+
+%%
+% You can index an array explicitly.
+threeDeeArray(1, 3, 2) = 42;
+%%
+% The |end| keyword stands for last entry.
+threeDeeArray(1, end, 2)
+%%
+% You can also flatten multidimensional arrays back to a column-vector
+% (transposed here for space).
+flattened = threeDeeArray(:)'
+flattened(11)
+%%hold all;
+% Arrays can also be indexed by slices
+threeDeeArray(1, :, :)
+%%
+% or by an array of indices.
+indices = find(threeDeeArray(1, 3, :) == 42)
+threeDeeArray(1, 3, indices)
+
+%%
+% One of the major shortcomings of MATLAB is its lack of
+% true listsREPLACE_WITH_DASH_DASHthe closest you can come is by extending an array row-by-row or
+% colum-by-column. This imposes a performance penalty, as the entire array
+% is recopied every time. But it can sometimes be worth it for assembling
+% small "stacks"hold all;.
+x = [];
+y = [];
+for i=1:10
+    x = [x; i];
+    y = [y, i*2];
+end
+size(x)
+size(y)
+ 
+
+%%
+% Multiplying two matrices the |*| operator rather than the |.*| operator
+% performs matrix multiplication, so the number of columns of the first
+% matrix must match the number of rows of the second.
+A = [1 2; 3 4];
+u = [5; 6];
+b = A * u
+
+
+
+%% Basic plotting
+% It's good practice to initialize a figure with a call to |figure|. This
+% command will return a handle that you can use later as in input to the
+% same command to make the same figure active again.
+%
+% To put multiple objects on the same plot, issue a |hold on| command after
+% making your figure active. This prevents new plotted objects from
+% replacing the previous ones.
+%
+% 2D line plots can be made with the |plot| command. Like all commands in
+% this tutorial, nice documentation for this command is available with F1.
+% Plots can be decorated with commands like |title|, |xlabel|, |ylabel|,
+% |ylim|, or |legend|. Again, the built in help browser, or just Google,
+% can be very useful for finding the names and syntax for less commonly\
+% used commands.
+
+figureHandle = figure();
+
+hold all;
+
+x = -3:.01:3;
+plot(x, ones(size(x)), 'k-');
+plot(x, x, 'g.');
+plot(x, x.^2 - 1, 'Color', 'red', 'LineWidth', 4);
+plot(x, x.^3 - 3*x, 'b-.', 'LineWidth', 2);
+ylim([-5, 5]);
+
+title('First four Probabilists'' Hermite polynomials');
+xlabel('x');
+ylabel('H_i(x)');
+legend('i=0', 'i=1', 'i=2', 'i=3');
+
+%%
+% You can make scatterplots with the |scatter| command.
+
+%%
+% 3D plots are possible with commands such as |scatter3|, or surf
+figure(); hold all;
+[X,Y,Z] = peaks(25);
+surf(X,Y,Z);
+view(49, 18);  % Set the view angle.
+
+% We can make a 3D scatterplot fairly intuitively, though formatting
+% options can get Byzantine.
+Zrand = rand(numel(Z), 1);
+Zrand = Zrand * (max(Z(:)) - min(Z(:)));
+Zrand = Zrand - mean(Zrand);
+% Arguments are (x, y, z, size, (variable for color mapping)):
+scatter3(X(:), Y(:), Zrand, 12, Zrand)
+
+% You can also plot curves in 3D, FWIW.
+theta = 0:.1:10*pi;
+r = sqrt(...
+        max(abs(X(:)))^2 ...
+        + ...
+        max(abs(Y(:)))^2 ...
+        );
+x = r*cos(theta);
+y = r*sin(theta);
+z = linspace(min(Z(:)), max(Z(:)), numel(theta));
+plot3(x, y, z, 'Color', 'red');
+
+
+
+%% Functions vs scripts
+% This file us a MATLAB scriptREPLACE_WITH_DASH_DASHa series of statments, perhaps separated
+% into cells by comment lines beginning with two |%| symbols.
+% Incidentally, these cells can be evaluated one-by-one with the default
+% |Ctrl+Enter| keyboard shortcut, similar to the |Shift+Enter| shortcut in
+% Mathematica.
+%
+% However, to do something a little more like real programming in Matlab,
+% you'll want functions. Functions need to be defined in a separate |*.m|
+% file. (Nested functions are possible, but not in scripts. It appears that
+% classes can only be defined in their own files, not nested.)
+%
+% I made a small example file to accompany this tutorial, called
+% |squareInputValue.m|. It looks something like this:
+%
+%   function outputValue = squareInputValue(inputValue)
+%       outputValue = inputValue .^ 2;
+%   end
+squareInputValue(2)
+
+%%
+% If you have to do slightly larger-scale programming in MATLAB, you may be
+% interested in reading about its rudimentary object-orientation (look up
+% |classdef| in the help), and package management (see |import|, and Google)
+% capabilities.
+
+%%
+% Functions that can operate without arguments, such as the built-in rand,
+% can be called without parenthases, although I personally dislike this
+% style.
+x = rand();
+y = rand;
+z = x - y;
+
+%%
+% If your function can be performed in a single statement, like our
+% squareInputValue example, you can write it as an anonymous function
+f = @(x) x.^2;
+f(2)
+%%
+% The syntax is
+%
+%  |IDENTIFIER = @(ARG1 [, ARG2, ARG3, etc]) (statement with the given value(s) of ARG1(...))|
+%
+% This is similar to Python's |lambda| keyword, where this function would be
+%
+%  f = lambda x: x**2
+
+%%
+% In some contexts, such as when integrating ODEs (see below) a function
+% handle is desired. Unlike in Python, where both |squareInputValue| and
+% |f| would be callable objects at this point, attempts to use
+% |squareInputValue| as an object at this point would be interpreted as
+% calls without arguments (due to the previously mentioned regrettable
+% no-parenthases no-arguments optional syntax), and would result in the error
+%
+%  Error using squareInputValue (line 2)
+%  Not enough input arguments.
+%
+% You can create a function handle to pass to other functions by prepending
+% an @ symbol. The anonymous function f is already a function handle.
+squaringHandle = @squareInputValue;
+squaringHandle(2)
+
+
+%% Numerical integration of systems of ODEs
+% While you can write your own numerical integration routines, and schemes
+% like forward Euler can be implemented directly in your script without
+% much difficulty, MATLAB includes several built-in integrators to make
+% your life easier. These are particulary useful when integrating stiff
+% systems of ODEs, where error or stepsize control is required, and schemes
+% such as forward Euler might fail spectacularly.
+%
+% Lets define a simple 1D ODE. The built-in integrators expect your
+% right-hand-side (RHS) function to take two arguments, the current time,
+% and the current state. This allows you to have time-dependent effects,
+% such as nonautomous forcing. For now, we'll just ignore the t argument.
+dxdt = @(t, x) (4 - x) * (2 - x);
+
+%%
+% Integrators vary in their required arguments, but they generally require
+% a handle to a RHS function, a time range, and an initial
+% condition, and return a set trajectory as a sequence of points, and
+% corresponding times (or or however you interpret the independent
+% variable). Here, we'll use a Runge-Kutta method of order 4(5),
+% and plot the resulting trajectory.
+timeRange = [0, 6];
+initialCondition = 3.99;
+[T, X] = ode45(dxdt, timeRange, initialCondition);
+figure();
+plot(T, X);
+xlabel('t');
+ylabel('x(t)');
+
+%%
+% We can also use a pair of linear ODEs.
+%
+% $$\frac{dx}{dt} = 3   (1/2 - x) + 1/2 (-1/4 - y)$$
+%
+% $$\frac{dy}{dt} = 1/3 (1/2 - x) + 6   (-1/4 - y)$$
+%
+A = [3,   1/2; ...
+     1/3, 6   ];
+XYfixed = [1/2; -1/4];
+rhs = @(t, XY) A * (XYfixed - reshape(XY, 2, 1));
+%%
+% Let's start with a bunch of random initial conditions.
+numTrajectories = 80;
+times = 0:.01:10;
+trajectories = zeros(numel(times), 2, numTrajectories);
+for replicate=1:numTrajectories
+    initialCondition = rand(2, 1) * 2 - 1;
+    [times, states] = ode45(rhs, times, initialCondition);
+    trajectories(:, :, replicate) = states;
+end
+%%%
+% Let's plot those trajectories. However, we're going to add an extra
+% featureREPLACE_WITH_DASH_DASHto visualize the vector field, we'll plot a quiver of arrows
+% pointing in the direction of the vector field for a grid of points in the
+% X-Y plane. Note that we use the function |meshgrid| to create a repeating
+% grid of rows of $x$ values and columns of $y$ values, then evaluate the
+% intersections of these rows and values to get $u=dx/dt$ and $v=dy/dt$.
+figure(); hold on;
+for replicate=1:numTrajectories
+    states = trajectories(:, :, replicate);
+    scatter(states(1, 1), states(1, 2), 32, 'Marker', 'o', ...
+            'MarkerEdgeColor', 'black', 'MarkerFaceColor', 'black');
+    scatter(states(end, 1), states(end, 2), 100, 'Marker', 'o', ...
+            'MarkerEdgeColor', 'black', 'MarkerFaceColor', 'white'...
+            );
+    plot(states(:, 1), states(:, 2), 'k');
+end
+[X, Y] = meshgrid(-1:.25:1, -1:.25:1);
+gridShape = size(X);
+U = zeros(size(X));
+V = zeros(size(X));
+for i=1:gridShape(1)
+    for j=1:gridShape(2)
+        uv = rhs(0, [X(i,j); Y(i,j)]);
+        U(i,j) = uv(1);
+        V(i,j) = uv(2);
+    end
+end
+quiver(X, Y, U, V, 'Color', 'red');
+xlabel('x');
+ylabel('y');
+title('Trajectories move from black to white points.');
+
+
+%% Symbolic computation
+% Your version of MATLAB might include support for symbolic computation.
+% While Mathematica is a more common choice for doing symbolic
+% computations, we'll go through a couple examples here to introduce the
+% MATLAB equivalent.
+%
+% using syntax which is strangely divergent from normal MATLAB code, we can
+% declare an abstract function.
+syms f(x)
+f
+x
+
+%%
+% If we had done this with the command
+%
+%   syms f(x)
+%
+% instead, the function f would have been declared, but not x.
+
+%%
+% Note that our function does not yet have an associated expression. We can
+% add that with a new syntax that looks disturbingly like the illegal
+% action of assigning to a function evaluation.
+f(x) = x^3*sin(x)
+
+%%
+% We can differentiate this.
+diff(f, x, 2)
+
+%%
+% (
+% Note that, usually, the |diff| function is used for computing successive
+% differences in a vector of values. Because MATLAB packages and namespaces
+% are a relatively "new" feature (added in version 2008a), much of the
+% MATLAB standard libraries simply dump their functions into the global
+% namespace, and use complicated contextual rules to decide precedence, if
+% they don't simply shadow each other.
+% )
+vec = [1 5 6];
+diff(vec)
+
+%% 
+% Using a further unintuitive abuse of notation, we can use the Symbolic
+% Math Toolbox to integrate, for example, a first-order linear ODE.
+syms y(t) b
+y(t) = dsolve(diff(y) == -t*y, y(0) == b)
+f = symfun(y(t), [b, t])
+%%
+% Plot this function.
+figure();
+tvals = 0:.1:4;
+bval = 1.0;
+plot(tvals, f(bval, tvals));
+title(strcat('y(t)=', char(y(t)), sprintf('  b=%.1f', bval)));
+xlabel('t');
+ylabel('y');
+
+%%
+% This example is taken nearly directly from the help files; for more
+% information and tutorials, open the MATLAB desktop Help Browser, and
+% search for "Symbolic Computation".
+
+%% Debugging
+% It's often useful to inspect the state of a program at a particular point
+% deep in a called function. To this end, you can set break points in the
+% by clicking the |-| sign in the left margin of a line in the editor,
+% to the right of the line numbers.
+% 
+% <<setBreakpoint.png>>
+% 
+%
+% When you run a script which calls this code, assuming you did not call
+% |clear all|, which clears both variables and breakpoints, the interpreter
+% will stop when this line is reached, and indicate this state with both a
+% green arrow in the margin of this code ...
+% 
+% <<atBreakpoint.png>>
+% 
+%
+% ... and a |K| before your interactive prompt in the Command Window.
+% 
+% <<commandWindowDebugging.png>>
+% 
+%
+% At this point, you can |disp| out or modify variables and expressions. 
+% In newer versions of MATLAB, the "EDITOR" tab will contain buttons for
+% continuing to the next breakpoint, stepping to the next line of code,
+% stepping into the function about to be called, etc.
+% 
+% <<debugButtons.png>>
+% 
+%
+% To quit debug mode, either prese the continue button (or keyboard
+% shortcut) (and possibly also clear your breakpoints), press the "Quit
+% Debugging" button, or enter the command |dbquit| in thie Command Window.
+
+##### SOURCE END #####
+--></body></html>
