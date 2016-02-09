@@ -1,4 +1,4 @@
-%% MATLAB Tutorial Differential Equations
+%% MATLAB Tutorial for Differential Equations
 % *DISCLAIMER*
 % Almost everything you can do in MATLAB, you can do in Python, for free,
 % with the addition of the packages NumPy, SciPy, and Matplotlib (and SymPy
@@ -12,16 +12,17 @@
 % regions of academia, you may want to investigate other languages if you
 % decide you want to do any programming outside of this class.
 %
-%
+% The script which generates this document is uploaded at
+% <http://github.com/tsbertalan/matlabTutorial>.
 
 %% Basics
 % Statements can be closed with a semicolon,
 x = 3*4;
 %%
-% or left unclosed, in which case they will print when evaluated
+% or left unclosed, in which case they will print when evaluated.
 x = 3*4
 %%
-% Most basic operations act as you'd expect:
+% Most basic operations act as you'd expect.
 3 + 6 - 2 * 3 / 9
 %%
 % However, you may sometimes want to use elementwise operations with matrix
@@ -179,7 +180,7 @@ b = A * u
 
 
 
-%% Basic plotting.
+%% Basic plotting
 % It's good practice to initialize a figure with a call to |figure|. This
 % command will return a handle that you can use later as in input to the
 % same command to make the same figure active again.
@@ -243,7 +244,7 @@ plot3(x, y, z, 'Color', 'red');
 
 
 
-%% Functions vs scripts.
+%% Functions vs scripts
 % This file us a MATLAB script--a series of statments, perhaps separated
 % into cells by comment lines beginning with two |%| symbols.
 % Incidentally, these cells can be evaluated one-by-one with the default
@@ -308,7 +309,7 @@ squaringHandle = @squareInputValue;
 squaringHandle(2)
 
 
-%% Numerical integration of systems of ODEs.
+%% Numerical integration of systems of ODEs
 % While you can write your own numerical integration routines, and schemes
 % like forward Euler can be implemented directly in your script without
 % much difficulty, MATLAB includes several built-in integrators to make
