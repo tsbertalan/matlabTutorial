@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>MATLAB Tutorial for Differential Equations</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-02-09"><meta name="DC.source" content="matlabTutorial.m"><style type="text/css">
+      --><title>MATLAB Tutorial for Differential Equations</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-02-10"><meta name="DC.source" content="matlabTutorial.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>MATLAB Tutorial for Differential Equations</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Basics</a></li><li><a href="#12">Arrays</a></li><li><a href="#25">Basic plotting</a></li><li><a href="#28">Functions vs scripts</a></li><li><a href="#34">Numerical integration of systems of ODEs</a></li><li><a href="#42">Find eigenvalues and eigenvectors.</a></li><li><a href="#46">Make a 1D direction field.</a></li><li><a href="#48">Symbolic computation</a></li><li><a href="#56">Debugging</a></li></ul></div><p><b>DISCLAIMER</b></p><p>Almost everything you can do in MATLAB, you can do in Python, for free, with the addition of the packages NumPy, SciPy, and Matplotlib (and SymPy for the symbolic stuff). While MATLAB may be free to you now while you're a student, it probably will not be once you graduate. Further, MATLAB is, as its name suggests, best suited to matrix computations. It is not a very good general-purpose programming language, and many of its misfeatures are made permanent by a need for backwards compatibility with 32 years worth of legacy scripts. So, while MATLAB is still the most commonly used language in many regions of academia, and so is an essential skill for any scientific/industrial programmer, you may want to investigate other languages if you decide you want to do any programming outside of this class.</p><p>The script which generates this document is uploaded at <a href="http://github.com/tsbertalan/matlabTutorial">http://github.com/tsbertalan/matlabTutorial</a>, and the rendered HTML version is visible at <a href="https://rawgit.com/tsbertalan/matlabTutorial/master/html/matlabTutorial.html">rawgit.com</a> or <a href="https://htmlpreview.github.io/?https://github.com/tsbertalan/matlabTutorial/blob/master/html/matlabTutorial.html">htmlpreview.github.io</a>.</p><pre class="codeinput"><span class="comment">% Make this script's results exactly reproducible.</span>
+  </style></head><body><div class="content"><h1>MATLAB Tutorial for Differential Equations</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Basics</a></li><li><a href="#12">Arrays</a></li><li><a href="#25">Basic plotting</a></li><li><a href="#28">Functions vs scripts</a></li><li><a href="#34">Numerical integration of systems of ODEs</a></li><li><a href="#42">Find eigenvalues and eigenvectors.</a></li><li><a href="#46">Make a 1D direction field.</a></li><li><a href="#48">Symbolic computation</a></li><li><a href="#60">Debugging</a></li></ul></div><p><b>DISCLAIMER</b></p><p>Almost everything you can do in MATLAB, you can do in Python, for free, with the addition of the packages NumPy, SciPy, and Matplotlib (and SymPy for the symbolic stuff). While MATLAB may be free to you now while you're a student, it probably will not be once you graduate. Further, MATLAB is, as its name suggests, best suited to matrix computations. It is not a very good general-purpose programming language, and many of its misfeatures are made permanent by a need for backwards compatibility with 32 years worth of legacy scripts. So, while MATLAB is still the most commonly used language in many regions of academia, and so is an essential skill for any scientific/industrial programmer, you may want to investigate other languages if you decide you want to do any programming outside of this class.</p><p>The script which generates this document is uploaded at <a href="http://github.com/tsbertalan/matlabTutorial">http://github.com/tsbertalan/matlabTutorial</a>, and the rendered HTML version is visible at <a href="https://rawgit.com/tsbertalan/matlabTutorial/master/html/matlabTutorial.html">rawgit.com</a> or <a href="https://htmlpreview.github.io/?https://github.com/tsbertalan/matlabTutorial/blob/master/html/matlabTutorial.html">htmlpreview.github.io</a>.</p><pre class="codeinput"><span class="comment">% Make this script's results exactly reproducible.</span>
 close <span class="string">all</span>; clear <span class="string">all</span>; rng(4);
 </pre><h2>Basics<a name="2"></a></h2><p>Statements can be closed with a semicolon,</p><pre class="codeinput">x = 3*4;
 </pre><p>or left unclosed, in which case they will print when evaluated.</p><pre class="codeinput">x = 3*4
@@ -110,10 +110,11 @@ total = 0;
     total = total + x;
 <span class="keyword">end</span>
 </pre><p>The <tt>disp</tt> command can be used for explicitly printing things. Or <tt>fprintf</tt> can be used for more control.</p><pre class="codeinput">disp(total)
-fprintf(<span class="string">'%.2f'</span>, sum(xvalues));
+fprintf(<span class="string">'%.2f\n'</span>, sum(xvalues));
 </pre><pre class="codeoutput">    23
 
-23.00</pre><p>In the MATLAB Desktop, you can get help for most commands and functions by placing your edit cursor in the command and pressing F1. The help for <tt>fprintf</tt> looks like this on my machine:</p><p><img vspace="5" hspace="5" src="fprintfHelp.png" alt=""> </p><p>The fact that the help for <tt>fprintf</tt> is <i>just a little bit</i> wrong (in our simple usage, <tt>fprintf</tt> writes to standard out, not to a text file as claimed) is just a fun bonus.</p><p>Standard flow control constructs are available.</p><pre class="codeinput">x = sqrt(2);
+23.00
+</pre><p>In the MATLAB Desktop, you can get help for most commands and functions by placing your edit cursor in the command and pressing F1. The help for <tt>fprintf</tt> looks like this on my machine:</p><p><img vspace="5" hspace="5" src="fprintfHelp.png" alt=""> </p><p>The fact that the help for <tt>fprintf</tt> is <i>just a little bit</i> wrong (in our simple usage, <tt>fprintf</tt> writes to standard out, not to a text file as claimed) is just a fun bonus.</p><p>Standard flow control constructs are available.</p><pre class="codeinput">x = sqrt(2);
 <span class="keyword">if</span> x &lt; 2
     disp(<span class="string">'less'</span>);
 <span class="keyword">elseif</span> true == false
@@ -547,6 +548,39 @@ ans =
 
      4     1
 
+</pre><p>You can do indefinite integration</p><pre class="codeinput">f(x) = x^2;
+int(f)
+</pre><pre class="codeoutput"> 
+ans(x) =
+ 
+x^3/3
+ 
+</pre><p>and definite integration.</p><pre class="codeinput">f(x) = x^2;
+int(f, 0, 1)
+</pre><pre class="codeoutput"> 
+ans =
+ 
+1/3
+ 
+</pre><p>infinite bounds are possible</p><pre class="codeinput">answer = int(f*exp(-x^2/2), -inf, inf)
+</pre><pre class="codeoutput"> 
+answer =
+ 
+2^(1/2)*pi^(1/2)
+ 
+</pre><p>Results can be converted to strings, and simplified.</p><pre class="codeinput">disp(<span class="string">'with char:'</span>)
+char(answer)
+disp(<span class="string">'with pretty:'</span>)
+pretty(simplify(answer))
+</pre><pre class="codeoutput">with char:
+
+ans =
+
+2^(1/2)*pi^(1/2)
+
+with pretty:
+sqrt(2) sqrt(pi)
+
 </pre><p>Using a further unintuitive abuse of notation, we can use the Symbolic Math Toolbox to integrate, for example, a first-order linear ODE.</p><pre class="codeinput">syms <span class="string">y(t)</span> <span class="string">b</span>
 y(t) = dsolve(diff(y) == -t*y, y(0) == b)
 </pre><pre class="codeoutput"> 
@@ -567,7 +601,7 @@ yt(b, t) =
  
 b*exp(-t^2/2)
  
-</pre><img vspace="5" hspace="5" src="matlabTutorial_09.png" alt=""> <p>This example is taken nearly directly from the help files; for more information and tutorials, open the MATLAB desktop Help Browser, and search for "Symbolic Computation".</p><h2>Debugging<a name="56"></a></h2><p>It's often useful to inspect the state of a program at a particular point deep in a called function. To this end, you can set break points by clicking the <tt>-</tt> sign in the left margin of a line in the editor, to the right of the line numbers.</p><p><img vspace="5" hspace="5" src="setBreakpoint.png" alt=""> </p><p>When you run a script which calls this code, assuming you did not call <tt>clear all</tt>, which clears both variables and breakpoints, the interpreter will stop when this line is reached, and indicate this state with both a green arrow in the margin of this code ...</p><p><img vspace="5" hspace="5" src="atBreakpoint.png" alt=""> </p><p>... and a <tt>K</tt> before your interactive prompt in the Command Window.</p><p><img vspace="5" hspace="5" src="commandWindowDebugging.png" alt=""> </p><p>At this point, you can <tt>disp</tt> out or modify variables and expressions. In newer versions of MATLAB, the "EDITOR" tab will contain buttons for continuing to the next breakpoint, stepping to the next line of code, stepping into the function about to be called, etc.</p><p><img vspace="5" hspace="5" src="debugButtons.png" alt=""> </p><p>To quit debug mode, either press the continue button (or keyboard shortcut) (and possibly also clear your breakpoints), press the "Quit Debugging" button, or enter the command <tt>dbquit</tt> in thie Command Window.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="matlabTutorial_09.png" alt=""> <p>This example is taken nearly directly from the help files; for more information and tutorials, open the MATLAB desktop Help Browser, and search for "Symbolic Computation".</p><h2>Debugging<a name="60"></a></h2><p>It's often useful to inspect the state of a program at a particular point deep in a called function. To this end, you can set break points by clicking the <tt>-</tt> sign in the left margin of a line in the editor, to the right of the line numbers.</p><p><img vspace="5" hspace="5" src="setBreakpoint.png" alt=""> </p><p>When you run a script which calls this code, assuming you did not call <tt>clear all</tt>, which clears both variables and breakpoints, the interpreter will stop when this line is reached, and indicate this state with both a green arrow in the margin of this code ...</p><p><img vspace="5" hspace="5" src="atBreakpoint.png" alt=""> </p><p>... and a <tt>K</tt> before your interactive prompt in the Command Window.</p><p><img vspace="5" hspace="5" src="commandWindowDebugging.png" alt=""> </p><p>At this point, you can <tt>disp</tt> out or modify variables and expressions. In newer versions of MATLAB, the "EDITOR" tab will contain buttons for continuing to the next breakpoint, stepping to the next line of code, stepping into the function about to be called, etc.</p><p><img vspace="5" hspace="5" src="debugButtons.png" alt=""> </p><p>To quit debug mode, either press the continue button (or keyboard shortcut) (and possibly also clear your breakpoints), press the "Quit Debugging" button, or enter the command <tt>dbquit</tt> in thie Command Window.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% MATLAB Tutorial for Differential Equations
 
@@ -643,11 +677,12 @@ for x=xvalues
     total = total + x;
 end
 
+
 %%
 % The |disp| command can be used for explicitly printing things. Or
 % |fprintf| can be used for more control.
 disp(total)
-fprintf('%.2f', sum(xvalues));
+fprintf('%.2f\n', sum(xvalues));
 
 %%
 % In the MATLAB Desktop, you can get help for most commands and functions
@@ -1195,6 +1230,27 @@ diff(f, x, 2)
 vec = [1 5 6];
 diff(vec)
 
+%%
+% You can do indefinite integration
+f(x) = x^2;
+int(f)
+
+%%
+% and definite integration.
+f(x) = x^2;
+int(f, 0, 1)
+
+%% 
+% infinite bounds are possible
+answer = int(f*exp(-x^2/2), -inf, inf)
+
+%%
+% Results can be converted to strings, and simplified.
+disp('with char:')
+char(answer)
+disp('with pretty:')
+pretty(simplify(answer))
+
 %% 
 % Using a further unintuitive abuse of notation, we can use the Symbolic
 % Math Toolbox to integrate, for example, a first-order linear ODE.
@@ -1210,6 +1266,7 @@ plot(tvals, yt(bval, tvals));
 title(strcat('y(t)=', char(y(t)), sprintf(',  b=%.1f', bval)));
 xlabel('t');
 ylabel('y');
+
 
 %%
 % This example is taken nearly directly from the help files; for more

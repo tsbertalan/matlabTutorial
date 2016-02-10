@@ -72,11 +72,12 @@ for x=xvalues
     total = total + x;
 end
 
+
 %%
 % The |disp| command can be used for explicitly printing things. Or
 % |fprintf| can be used for more control.
 disp(total)
-fprintf('%.2f', sum(xvalues));
+fprintf('%.2f\n', sum(xvalues));
 
 %%
 % In the MATLAB Desktop, you can get help for most commands and functions
@@ -624,6 +625,27 @@ diff(f, x, 2)
 vec = [1 5 6];
 diff(vec)
 
+%%
+% You can do indefinite integration
+f(x) = x^2;
+int(f)
+
+%%
+% and definite integration.
+f(x) = x^2;
+int(f, 0, 1)
+
+%% 
+% infinite bounds are possible
+answer = int(f*exp(-x^2/2), -inf, inf)
+
+%%
+% Results can be converted to strings, and simplified.
+disp('with char:')
+char(answer)
+disp('with pretty:')
+pretty(simplify(answer))
+
 %% 
 % Using a further unintuitive abuse of notation, we can use the Symbolic
 % Math Toolbox to integrate, for example, a first-order linear ODE.
@@ -639,6 +661,7 @@ plot(tvals, yt(bval, tvals));
 title(strcat('y(t)=', char(y(t)), sprintf(',  b=%.1f', bval)));
 xlabel('t');
 ylabel('y');
+
 
 %%
 % This example is taken nearly directly from the help files; for more
