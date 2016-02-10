@@ -216,7 +216,7 @@ legend('i=0', 'i=1', 'i=2', 'i=3');
 % You can make scatterplots with the |scatter| command.
 
 %%
-% 3D plots are possible with commands such as |scatter3|, or surf
+% 3D plots are possible with commands such as |scatter3|, or |surf|
 figure(); hold all;
 [X,Y,Z] = peaks(25);
 surf(X,Y,Z);
@@ -245,7 +245,7 @@ plot3(x, y, z, 'Color', 'red');
 
 
 %% Functions vs scripts
-% This file us a MATLAB script--a series of statments, perhaps separated
+% This file is a MATLAB script--a series of statments, perhaps separated
 % into cells by comment lines beginning with two |%| symbols.
 % Incidentally, these cells can be evaluated one-by-one with the default
 % |Ctrl+Enter| keyboard shortcut, similar to the |Shift+Enter| shortcut in
@@ -304,7 +304,7 @@ f(2)
 %  Not enough input arguments.
 %
 % You can create a function handle to pass to other functions by prepending
-% an @ symbol. The anonymous function f is already a function handle.
+% an @ symbol (our anonymous function |f| is already a function handle).
 squaringHandle = @squareInputValue;
 squaringHandle(2)
 
@@ -317,16 +317,18 @@ squaringHandle(2)
 % systems of ODEs, where error or stepsize control is required, and schemes
 % such as forward Euler might fail spectacularly.
 %
+% _*Numerically integrate a single linear ODE.*_
+%
 % Lets define a simple 1D ODE. The built-in integrators expect your
 % right-hand-side (RHS) function to take two arguments, the current time,
 % and the current state. This allows you to have time-dependent effects,
 % such as nonautomous forcing. For now, we'll just ignore the t argument.
-dxdt = @(t, x) (4 - x) * (2 - x);
+dxdt = @(t, x) 2 - x;
 
 %%
 % Integrators vary in their required arguments, but they generally require
 % a handle to a RHS function, a time range, and an initial
-% condition, and return a set trajectory as a sequence of points, and
+% condition, and return a trajectory as a sequence of points with
 % corresponding times (or or however you interpret the independent
 % variable). Here, we'll use a Runge-Kutta method of order 4(5),
 % and plot the resulting trajectory.
@@ -339,11 +341,13 @@ xlabel('t');
 ylabel('x(t)');
 
 %%
+% _*Numerically integrate a pair of coupled linear ODEs and plot the phase portrait.*_
+%
 % We can also use a pair of linear ODEs.
 %
-% $$\frac{dx}{dt} = 3   (1/2 - x) + 1/2 (-1/4 - y)$$
+% $$\frac{dx}{dt} = 3   (\frac{1}{2} - x) + \frac{1}{2} (-\frac{1}{4} - y)$$
 %
-% $$\frac{dy}{dt} = 1/3 (1/2 - x) + 6   (-1/4 - y)$$
+% $$\frac{dy}{dt} = \frac{1}{3} (1/2 - x) + 6   (-\frac{1}{4} - y)$$
 %
 A = [3,   1/2; ...
      1/3, 6   ];
@@ -366,7 +370,7 @@ end
 % X-Y plane. Note that we use the function |meshgrid| to create a repeating
 % grid of rows of $x$ values and columns of $y$ values, then evaluate the
 % intersections of these rows and values to get $u=dx/dt$ and $v=dy/dt$.
-figure(); hold on;
+linearTwoDeeFig = figure(); hold on;
 for replicate=1:numTrajectories
     states = trajectories(:, :, replicate);
     scatter(states(1, 1), states(1, 2), 32, 'Marker', 'o', ...
@@ -392,11 +396,142 @@ xlabel('x');
 ylabel('y');
 title('Trajectories move from black to white points.');
 
+%%
+% _*Numerically integrate a pair of nonlinear ODEs and plot the phase portrait.*_
+%
+% Let's try a nonlinear system. In particular we can use two ODEs for a Van
+% der Pol oscillator, which happen to be a stiff system. Because of this
+% feature, integration methods with a fixed step size are not really
+% appropriate, so we'll use |ode23s|, an integrator designed for such
+% systems.
+%
+% This integration example is taken straight from the MATLAB help files,
+% although the plotting code is not.
+figure();
+hold on;
+dydt = @(t, y) [y(2); 1000*(1-y(1)^2)*y(2)-y(1)];  % See vdp1000.m, which comes with Matlab.
+numReps = 25;
+initialConditions = [rand(numReps, 1)*5-2.5, ...
+                     rand(numReps, 1)*3000-1500];
+for i=1:numReps
+    y0 = initialConditions(i, :);
+    [T,Y] = ode23s(dydt,[0 3000], y0);
+    plot(Y(:, 1), Y(:, 2), 'k-')
+    scatter(Y(1, 1), Y(1, 2), 'ko', 'MarkerFaceColor', 'black');
+end
+
+% Let's plot the attracting limit cycle as well.
+[T,Y] = ode23s(dydt,[0 3000], [2 0]);
+plot(Y(:, 1), Y(:, 2), 'red', 'LineWidth', 4)
+
+xlabel('y_1(t)');
+ylabel('y_2(t)');
+
+%%
+% Of course, you can integrate dynamics of arbitrary complexity and number of
+% variables--all the integrators such as |ode45| or |ode23s| require is a
+% handle to right-hand-side function. This you could write in a separte
+% file, and use the |@| prefix to make a function handle out of the name of
+% this external function, allowing you to define many-line RHS functions.
+
+
+
+%% Find eigenvalues and eigenvectors.
+% Previously, we defined a pair of linear ODEs in terms of a coefficient
+% matrix |A|.
+A
+%%
+% As you'll learn later in the course, the eigenvalues and eigenvectors of
+% this coefficient matrix actually tell us a lot about the dynamics of the
+% system. We can obtain them explictly with MATLAB.
+[V, D] = eig(A);
+V
+D = diag(D)  % MATLAB returns eigenvalues as a diagonal matrix when vectors are also requested.
+%%
+% Let's plot these on the previous figure, centered at what (by
+% construction) we know to be the fixed point.
+figure(linearTwoDeeFig);
+for i=[1 2]
+    v = V(:, i);
+    p1 = XYfixed;
+    p2 = XYfixed + v;
+    plot(...
+        [p1(1) p2(1)], ...
+        [p1(2) p2(2)], ...
+        'b', 'LineWidth', D(i));
+end
+ylim([-1, 1]);
+%%
+% The vectors point out the two directions along which motion towards the
+% steady state is organized--one fast, and one slow. The thickness of the
+% two lines corresponds to the corresponding eigenvalue, which tells you
+% which direction is the fast one and which is the slow.
+%
+% (Note that the actual Jacobian of this matrix is is actually |-A|, so the
+% actual eigenvalues would both be negative, indicating stability of the
+% steady state.)
+
+
+%% Make a 1D direction field.
+% In the book, there are some informative plots, in the chapter about 1D
+% dynamics, which show a direction field as a function of both time and the
+% single variable. Let's create one of these for a quadratic ODE.
+figure(); hold on;
+rhs = @(t, x) (4 - x) * (2 - x);
+title('dx/dt = (4-x) (2-x)');
+
+xvals = -1:.5:4;
+tvals = 0:1:6;
+
+[XVALS, TVALS] = meshgrid(xvals, tvals);
+U = zeros(size(XVALS));
+V = zeros(size(XVALS));
+for i=1:numel(xvals)
+    for j=1:numel(tvals)
+        t = TVALS(j, i);
+        x = XVALS(j, i);
+        dxdt = rhs(t, x);
+        dt = 1;  % arbitrary
+        dx = dxdt * dt;
+        U(j,i) = dt;
+        V(j,i) = dx;
+    end
+end
+quiver(TVALS, XVALS, U, V, 'Color', 'black');
+xlim([min(tvals), max(tvals)]);
+
+% Let's add a few trajectories.
+x0t0 = [3.99 0;  3 0;  2 0; 1 0; 0 0; -1 0; 0 2; 1 4; 3 4; 3 5; 0 5];
+for i=1:11
+    x0 = x0t0(i, 1);
+    t0 = x0t0(i, 2);
+    
+    % Integrate forward.
+    [T, X] = ode45(rhs, [t0, max(tvals)], x0);
+    plot(T, X, 'k-');
+    
+    % Integrate backward to fill out the partial trajectories.
+    if t0 > min(tvals)
+        [T, X] = ode45(rhs, t0:-.01:min(tvals), x0);
+        plot(T, X, 'red');
+    end
+end
+ylim([min(xvals), max(xvals)]);
+xlabel('t');
+ylabel('x(t)');
+%%
+% For some of the reverse trajectories, we get a warning because either $x$
+% is changing very slowly (near the unstable $x=4$ fixed point), or $x$ is
+% changing very quickly (as it decreases without bound towards negative
+% infinity).
+
+
+
 
 %% Symbolic computation
 % Your version of MATLAB might include support for symbolic computation.
 % While Mathematica is a more common choice for doing symbolic
-% computations, we'll go through a couple examples here to introduce the
+% computations, we'll go through an example here to introduce the
 % MATLAB equivalent.
 %
 % using syntax which is strangely divergent from normal MATLAB code, we can
@@ -439,14 +574,14 @@ diff(vec)
 % Math Toolbox to integrate, for example, a first-order linear ODE.
 syms y(t) b
 y(t) = dsolve(diff(y) == -t*y, y(0) == b)
-f = symfun(y(t), [b, t])
 %%
-% Plot this function.
+% Make a callable function out of this explicit solution, and plot it.
+yt = symfun(y(t), [b, t])
 figure();
 tvals = 0:.1:4;
 bval = 1.0;
-plot(tvals, f(bval, tvals));
-title(strcat('y(t)=', char(y(t)), sprintf('  b=%.1f', bval)));
+plot(tvals, yt(bval, tvals));
+title(strcat('y(t)=', char(y(t)), sprintf(',  b=%.1f', bval)));
 xlabel('t');
 ylabel('y');
 
@@ -457,7 +592,7 @@ ylabel('y');
 
 %% Debugging
 % It's often useful to inspect the state of a program at a particular point
-% deep in a called function. To this end, you can set break points in the
+% deep in a called function. To this end, you can set break points
 % by clicking the |-| sign in the left margin of a line in the editor,
 % to the right of the line numbers.
 % 
@@ -485,6 +620,6 @@ ylabel('y');
 % <<debugButtons.png>>
 % 
 %
-% To quit debug mode, either prese the continue button (or keyboard
+% To quit debug mode, either press the continue button (or keyboard
 % shortcut) (and possibly also clear your breakpoints), press the "Quit
 % Debugging" button, or enter the command |dbquit| in thie Command Window.
