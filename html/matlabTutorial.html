@@ -66,7 +66,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>MATLAB Tutorial for Differential Equations</h1><!--introduction--><p><b>DISCLAIMER</b> Almost everything you can do in MATLAB, you can do in Python, for free, with the addition of the packages NumPy, SciPy, and Matplotlib (and SymPy for the symbolic stuff). While MATLAB may be free to you now while you're a student, it may not be once you graduate. MATLAB is, as its name suggests, best suited to matrix computations. It is not a very good general-purpose programming language, and many of its misfeatures are baked in by a need for backwards compatibility with 32 years worth of legacy scripts. While MATLAB is still the most commonly used language in many regions of academia, you may want to investigate other languages if you decide you want to do any programming outside of this class.</p><p>The script which generates this document is uploaded at <a href="http://github.com/tsbertalan/matlabTutorial">http://github.com/tsbertalan/matlabTutorial</a>.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Basics</a></li><li><a href="#11">Arrays</a></li><li><a href="#24">Basic plotting</a></li><li><a href="#27">Functions vs scripts</a></li><li><a href="#33">Numerical integration of systems of ODEs</a></li><li><a href="#40">Find eigenvalues and eigenvectors.</a></li><li><a href="#44">Make a 1D direction field.</a></li><li><a href="#46">Symbolic computation</a></li><li><a href="#54">Debugging</a></li></ul></div><h2>Basics<a name="1"></a></h2><p>Statements can be closed with a semicolon,</p><pre class="codeinput">x = 3*4;
+  </style></head><body><div class="content"><h1>MATLAB Tutorial for Differential Equations</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Basics</a></li><li><a href="#12">Arrays</a></li><li><a href="#25">Basic plotting</a></li><li><a href="#28">Functions vs scripts</a></li><li><a href="#34">Numerical integration of systems of ODEs</a></li><li><a href="#42">Find eigenvalues and eigenvectors.</a></li><li><a href="#46">Make a 1D direction field.</a></li><li><a href="#48">Symbolic computation</a></li><li><a href="#56">Debugging</a></li></ul></div><p><b>DISCLAIMER</b></p><p>Almost everything you can do in MATLAB, you can do in Python, for free, with the addition of the packages NumPy, SciPy, and Matplotlib (and SymPy for the symbolic stuff). While MATLAB may be free to you now while you're a student, it probably will not be once you graduate. Further, MATLAB is, as its name suggests, best suited to matrix computations. It is not a very good general-purpose programming language, and many of its misfeatures are made permanent by a need for backwards compatibility with 32 years worth of legacy scripts. So, while MATLAB is still the most commonly used language in many regions of academia, and so is an essential skill for any scientific/industrial programmer, you may want to investigate other languages if you decide you want to do any programming outside of this class.</p><p>The script which generates this document is uploaded at <a href="http://github.com/tsbertalan/matlabTutorial">http://github.com/tsbertalan/matlabTutorial</a>, and the rendered HTML version is visible at <a href="https://rawgit.com/tsbertalan/matlabTutorial/master/html/matlabTutorial.html">rawgit.com</a> or <a href="https://htmlpreview.github.io/?https://github.com/tsbertalan/matlabTutorial/blob/master/html/matlabTutorial.html">htmlpreview.github.io</a>.</p><pre class="codeinput"><span class="comment">% Make this script's results exactly reproducible.</span>
+close <span class="string">all</span>; clear <span class="string">all</span>; rng(4);
+</pre><h2>Basics<a name="2"></a></h2><p>Statements can be closed with a semicolon,</p><pre class="codeinput">x = 3*4;
 </pre><p>or left unclosed, in which case they will print when evaluated.</p><pre class="codeinput">x = 3*4
 </pre><pre class="codeoutput">
 x =
@@ -111,7 +113,7 @@ total = 0;
 fprintf(<span class="string">'%.2f'</span>, sum(xvalues));
 </pre><pre class="codeoutput">    23
 
-23.00</pre><p>In the MATLAB Desktop, you can get help for most commands and functions by placing your edit cursor in the command and pressing F1. The help for <tt>fprintf</tt> looks like this on my machine:</p><p><img vspace="5" hspace="5" src="fprintfHelp.png" alt=""> </p><p>Standard flow control constructs are available.</p><pre class="codeinput">x = sqrt(2);
+23.00</pre><p>In the MATLAB Desktop, you can get help for most commands and functions by placing your edit cursor in the command and pressing F1. The help for <tt>fprintf</tt> looks like this on my machine:</p><p><img vspace="5" hspace="5" src="fprintfHelp.png" alt=""> </p><p>The fact that the help for <tt>fprintf</tt> is <i>just a little bit</i> wrong (in our simple usage, <tt>fprintf</tt> writes to standard out, not to a text file as claimed) is just a fun bonus.</p><p>Standard flow control constructs are available.</p><pre class="codeinput">x = sqrt(2);
 <span class="keyword">if</span> x &lt; 2
     disp(<span class="string">'less'</span>);
 <span class="keyword">elseif</span> true == false
@@ -128,7 +130,7 @@ fprintf(<span class="string">'%.2f'</span>, sum(xvalues));
         disp(<span class="string">'meaning of life'</span>);
 <span class="keyword">end</span>
 </pre><pre class="codeoutput">alphabet
-</pre><h2>Arrays<a name="11"></a></h2><p>Matlab arrays are always at least two-dimensional. So, "vectors" are always either single-row or single-column matrices. You can inspect the dimensions of an array with the <tt>size</tt> command.</p><pre class="codeinput">nValues = 1:10;
+</pre><h2>Arrays<a name="12"></a></h2><p>Matlab arrays are always at least two-dimensional. So, "vectors" are always either single-row or single-column matrices. You can inspect the dimensions of an array with the <tt>size</tt> command.</p><pre class="codeinput">nValues = 1:10;
 size(nValues)
 </pre><pre class="codeoutput">
 ans =
@@ -276,7 +278,7 @@ b =
     17
     39
 
-</pre><h2>Basic plotting<a name="24"></a></h2><p>It's good practice to initialize a figure with a call to <tt>figure</tt>. This command will return a handle that you can use later as in input to the same command to make the same figure active again.</p><p>To put multiple objects on the same plot, issue a <tt>hold on</tt> command after making your figure active. This prevents new plotted objects from replacing the previous ones.</p><p>2D line plots can be made with the <tt>plot</tt> command. Like all commands in this tutorial, nice documentation for this command is available with F1. Plots can be decorated with commands like <tt>title</tt>, <tt>xlabel</tt>, <tt>ylabel</tt>, <tt>ylim</tt>, or <tt>legend</tt>. Again, the built in help browser, or just Google, can be very useful for finding the names and syntax for less commonly\ used commands.</p><pre class="codeinput">figureHandle = figure();
+</pre><h2>Basic plotting<a name="25"></a></h2><p>It's good practice to initialize a figure with a call to <tt>figure</tt>. This command will return a handle that you can use later as in input to the same command to make the same figure active again.</p><p>To put multiple objects on the same plot, issue a <tt>hold on</tt> command after making your figure active. This prevents new plotted objects from replacing the previous ones.</p><p>2D line plots can be made with the <tt>plot</tt> command. Like all commands in this tutorial, nice documentation for this command is available with F1. Plots can be decorated with commands like <tt>title</tt>, <tt>xlabel</tt>, <tt>ylabel</tt>, <tt>ylim</tt>, or <tt>legend</tt>. Again, the built in help browser, or just Google, can be very useful for finding the names and syntax for less commonly\ used commands.</p><pre class="codeinput">figureHandle = figure();
 
 hold <span class="string">all</span>;
 
@@ -315,7 +317,7 @@ x = r*cos(theta);
 y = r*sin(theta);
 z = linspace(min(Z(:)), max(Z(:)), numel(theta));
 plot3(x, y, z, <span class="string">'Color'</span>, <span class="string">'red'</span>);
-</pre><img vspace="5" hspace="5" src="matlabTutorial_02.png" alt=""> <h2>Functions vs scripts<a name="27"></a></h2><p>This file is a MATLAB script--a series of statments, perhaps separated into cells by comment lines beginning with two <tt>%</tt> symbols. Incidentally, these cells can be evaluated one-by-one with the default <tt>Ctrl+Enter</tt> keyboard shortcut, similar to the <tt>Shift+Enter</tt> shortcut in Mathematica.</p><p>However, to do something a little more like real programming in Matlab, you'll want functions. Functions need to be defined in a separate <tt>*.m</tt> file. (Nested functions are possible, but not in scripts. It appears that classes can only be defined in their own files, not nested.)</p><p>I made a small example file to accompany this tutorial, called <tt>squareInputValue.m</tt>. It looks something like this:</p><pre class="language-matlab"><span class="keyword">function</span> outputValue = squareInputValue(inputValue)
+</pre><img vspace="5" hspace="5" src="matlabTutorial_02.png" alt=""> <h2>Functions vs scripts<a name="28"></a></h2><p>This file is a MATLAB script--a series of statments, perhaps separated into cells by comment lines beginning with two <tt>%</tt> symbols. Incidentally, these cells can be evaluated one-by-one with the default <tt>Ctrl+Enter</tt> keyboard shortcut, similar to the <tt>Shift+Enter</tt> shortcut in Mathematica.</p><p>However, to do something a little more like real programming in Matlab, you'll want functions. Functions need to be defined in a separate <tt>*.m</tt> file. (Nested functions are possible, but not in scripts. It appears that classes can only be defined in their own files, not nested.)</p><p>I made a small example file to accompany this tutorial, called <tt>squareInputValue.m</tt>. It looks something like this:</p><pre class="language-matlab"><span class="keyword">function</span> outputValue = squareInputValue(inputValue)
     outputValue = inputValue .^ 2;
 <span class="keyword">end</span>
 </pre><pre class="codeinput">squareInputValue(2)
@@ -342,7 +344,7 @@ ans =
 
      4
 
-</pre><h2>Numerical integration of systems of ODEs<a name="33"></a></h2><p>While you can write your own numerical integration routines, and schemes like forward Euler can be implemented directly in your script without much difficulty, MATLAB includes several built-in integrators to make your life easier. These are particulary useful when integrating stiff systems of ODEs, where error or stepsize control is required, and schemes such as forward Euler might fail spectacularly.</p><p><i><b>Numerically integrate a single linear ODE.</b></i></p><p>Lets define a simple 1D ODE. The built-in integrators expect your right-hand-side (RHS) function to take two arguments, the current time, and the current state. This allows you to have time-dependent effects, such as nonautomous forcing. For now, we'll just ignore the t argument.</p><pre class="codeinput">dxdt = @(t, x) 2 - x;
+</pre><h2>Numerical integration of systems of ODEs<a name="34"></a></h2><p>While you can write your own numerical integration routines, and schemes like forward Euler can be implemented directly in your script without much difficulty, MATLAB includes several built-in integrators to make your life easier. These are particulary useful when integrating stiff systems of ODEs, where error or stepsize control is required, and schemes such as forward Euler might fail spectacularly.</p><p><i><b>Numerically integrate a single linear ODE.</b></i></p><p>Let's define a simple 1D ODE. The built-in integrators expect your right-hand-side (RHS) function to take two arguments, the current time, and the current state. This allows you to have time-dependent effects, such as nonautomous forcing. For now, we'll just ignore the t argument.</p><pre class="codeinput">dxdt = @(t, x) 2 - x;
 </pre><p>Integrators vary in their required arguments, but they generally require a handle to a RHS function, a time range, and an initial condition, and return a trajectory as a sequence of points with corresponding times (or or however you interpret the independent variable). Here, we'll use a Runge-Kutta method of order 4(5), and plot the resulting trajectory.</p><pre class="codeinput">timeRange = [0, 6];
 initialCondition = 3.99;
 [T, X] = ode45(dxdt, timeRange, initialCondition);
@@ -350,7 +352,7 @@ figure();
 plot(T, X);
 xlabel(<span class="string">'t'</span>);
 ylabel(<span class="string">'x(t)'</span>);
-</pre><img vspace="5" hspace="5" src="matlabTutorial_03.png" alt=""> <p><i><b>Numerically integrate a pair of coupled linear ODEs.</b></i></p><p>We can also use a pair of linear ODEs.</p><p><img src="matlabTutorial_eq58134.png" alt="$$\frac{dx}{dt} = 3   (\frac{1}{2} - x) + \frac{1}{2} (-\frac{1}{4} - y)$$"></p><p><img src="matlabTutorial_eq04682.png" alt="$$\frac{dy}{dt} = \frac{1}{3} (1/2 - x) + 6   (-\frac{1}{4} - y)$$"></p><pre class="codeinput">A = [3,   1/2; <span class="keyword">...</span>
+</pre><img vspace="5" hspace="5" src="matlabTutorial_03.png" alt=""> <p><i><b>Numerically integrate a pair of coupled linear ODEs and plot the phase portrait.</b></i></p><p>We can also use a pair of linear ODEs.</p><p><img src="matlabTutorial_eq58134.png" alt="$$\frac{dx}{dt} = 3   (\frac{1}{2} - x) + \frac{1}{2} (-\frac{1}{4} - y)$$"></p><p><img src="matlabTutorial_eq04682.png" alt="$$\frac{dy}{dt} = \frac{1}{3} (1/2 - x) + 6   (-\frac{1}{4} - y)$$"></p><pre class="codeinput">A = [3,   1/2; <span class="keyword">...</span>
      1/3, 6   ];
 XYfixed = [1/2; -1/4];
 rhs = @(t, XY) A * (XYfixed - reshape(XY, 2, 1));
@@ -387,7 +389,7 @@ quiver(X, Y, U, V, <span class="string">'Color'</span>, <span class="string">'re
 xlabel(<span class="string">'x'</span>);
 ylabel(<span class="string">'y'</span>);
 title(<span class="string">'Trajectories move from black to white points.'</span>);
-</pre><img vspace="5" hspace="5" src="matlabTutorial_04.png" alt=""> <p><i><b>Numerically integrate a pair of nonlinear ODEs.</b></i></p><p>Let's try a nonlinear system. In particular we can use two ODEs for a Van der Pol oscillator, which happen to be a stiff system. Because of this feature, integration methods with a fixed step size are not really appropriate, so we'll use <tt>ode23s</tt>, an integrator designed for such systems.</p><p>This integration example is taken straight from the MATLAB help files, although the plotting code is not.</p><pre class="codeinput">figure();
+</pre><img vspace="5" hspace="5" src="matlabTutorial_04.png" alt=""> <p><i><b>Numerically integrate a pair of nonlinear ODEs and plot the phase portrait.</b></i></p><p>Let's try a nonlinear system. In particular we can use two ODEs for a Van der Pol oscillator, which happen to be a stiff system. Because of this feature, integration methods with a fixed step size are not really appropriate, so we'll use <tt>ode23s</tt>, an integrator designed for such systems.</p><p>This integration example is taken straight from the MATLAB help files, although the plotting code is not.</p><pre class="codeinput">figure();
 hold <span class="string">on</span>;
 dydt = @(t, y) [y(2); 1000*(1-y(1)^2)*y(2)-y(1)];  <span class="comment">% See vdp1000.m, which comes with Matlab.</span>
 numReps = 25;
@@ -406,7 +408,28 @@ plot(Y(:, 1), Y(:, 2), <span class="string">'red'</span>, <span class="string">'
 
 xlabel(<span class="string">'y_1(t)'</span>);
 ylabel(<span class="string">'y_2(t)'</span>);
-</pre><img vspace="5" hspace="5" src="matlabTutorial_05.png" alt=""> <p>Of course, you can integrate dynamics of arbitrary complexity and number of variables--all the integrators such as <tt>ode45</tt> or <tt>ode23s</tt> require is a handle to right-hand-side function. This you could write in a separte file, and use the <tt>@</tt> prefix to make a function handle out of the name of this external function, allowing you to define many-line RHS functions.</p><h2>Find eigenvalues and eigenvectors.<a name="40"></a></h2><p>Previously, we defined a pair of linear ODEs in terms of a coefficient matrix <tt>A</tt>.</p><pre class="codeinput">A
+</pre><img vspace="5" hspace="5" src="matlabTutorial_05.png" alt=""> <p><b>Numerically integrate a large nonlinear system of ODEs.</b></p><p>Of course, you can integrate dynamics of arbitrary complexity and number of variables--all the integrators such as <tt>ode45</tt> or <tt>ode23s</tt> require is a handle to right-hand-side function. This you could write in a separte file, and use the <tt>@</tt> prefix to make a function handle out of the name of this external function, allowing you to define many-line RHS functions.</p><p>Let's define a system of coupled oscillators as</p><p><img src="matlabTutorial_eq76059.png" alt="$$\dot \theta_i = \omega_i + \frac{K}{N} \sum_{j=1}^N \sin(\theta_j - \theta_i)$$"></p><p>For, say, <img src="matlabTutorial_eq43279.png" alt="$N=128$"> . I'll define the right-hand-side function in a separate file, but it will look like this:</p><pre class="language-matlab"><span class="keyword">function</span> dTdt = coupledOscRHS(thetas, omegas, K)
+    N = numel(thetas);
+</pre><pre>     dTdt = zeros(size(thetas));
+     for i=1:N
+         dTdt(i) = 0;
+         for j=1:N
+             dTdt(i) = dTdt(i) + sin(thetas(j) - thetas(i));
+         end
+         dTdt(i) = omegas(i) + K/N * dTdt(i);
+     end
+ end</pre><p>Since our RHS function does not take a time and a state, as required, we'll wrap it in an anonymous function, baking in our chosen paramemters (a construction called a closure).</p><pre class="codeinput">N = 128;
+omegas = rand(N, 1) * 0.1;
+omegas = omegas - mean(omegas);
+K = 0.25;
+rhs = @(unused_t, thetas) coupledOscRHS(thetas, omegas, K);
+</pre><p>We'll start with a random initial condition, make a trajectory, then plot all the oscillators' phase angles over time.</p><pre class="codeinput">ic = rand(N, 1) * pi - pi/2;
+[T, X] = ode45(rhs, [0, 10], ic);
+figure();
+plot(T, X, <span class="string">'black'</span>);
+xlabel(<span class="string">'t'</span>)
+ylabel({<span class="string">'\theta_i(t)'</span>; sprintf(<span class="string">'for i=1,2,...,%d'</span>, N)});
+</pre><img vspace="5" hspace="5" src="matlabTutorial_06.png" alt=""> <h2>Find eigenvalues and eigenvectors.<a name="42"></a></h2><p>Previously, we defined a pair of linear ODEs in terms of a coefficient matrix <tt>A</tt>.</p><pre class="codeinput">A
 </pre><pre class="codeoutput">
 A =
 
@@ -439,7 +462,7 @@ D =
         <span class="string">'b'</span>, <span class="string">'LineWidth'</span>, D(i));
 <span class="keyword">end</span>
 ylim([-1, 1]);
-</pre><img vspace="5" hspace="5" src="matlabTutorial_06.png" alt=""> <p>The vectors point out the two directions along which motion towards the steady state is organized--one fast, and one slow. The thickness of the two lines corresponds to the corresponding eigenvalue, which tells you which direction is the fast one and which is the slow.</p><p>(Note that the actual Jacobian of this matrix is is actually <tt>-A</tt>, so the actual eigenvalues would both be negative, indicating stability of the steady state.)</p><h2>Make a 1D direction field.<a name="44"></a></h2><p>In the book, there are some informative plots, in the chapter about 1D dynamics, which show a direction field as a function of both time and the single variable. Let's create one of these for a quadratic ODE.</p><pre class="codeinput">figure(); hold <span class="string">on</span>;
+</pre><img vspace="5" hspace="5" src="matlabTutorial_07.png" alt=""> <p>The vectors point out the two directions along which motion towards the steady state is organized--one fast, and one slow. The thickness of the two lines corresponds to the corresponding eigenvalue, which tells you which direction is the fast one and which is the slow.</p><p>(Note that the actual Jacobian of this matrix is is actually <tt>-A</tt>, so the actual eigenvalues would both be negative, indicating stability of the steady state.)</p><h2>Make a 1D direction field.<a name="46"></a></h2><p>In the book, there are some informative plots, in the chapter about 1D dynamics, which show a direction field as a function of both time and the single variable. Let's create one of these for a quadratic ODE.</p><pre class="codeinput">figure(); hold <span class="string">on</span>;
 rhs = @(t, x) (4 - x) * (2 - x);
 title(<span class="string">'dx/dt = (4-x) (2-x)'</span>);
 
@@ -491,7 +514,7 @@ at time t.
 Warning: Failure at t=4.653440e+00.  Unable to meet integration tolerances
 without reducing the step size below the smallest value allowed (1.421085e-14)
 at time t. 
-</pre><img vspace="5" hspace="5" src="matlabTutorial_07.png" alt=""> <p>For some of the reverse trajectories, we get a warning because either <img src="matlabTutorial_eq43551.png" alt="$x$"> is changing very slowly (near the unstable <img src="matlabTutorial_eq52163.png" alt="$x=4$"> fixed point), or <img src="matlabTutorial_eq43551.png" alt="$x$"> is changing very quickly (as it decreases without bound towards negative infinity).</p><h2>Symbolic computation<a name="46"></a></h2><p>Your version of MATLAB might include support for symbolic computation. While Mathematica is a more common choice for doing symbolic computations, we'll go through an example here to introduce the MATLAB equivalent.</p><p>using syntax which is strangely divergent from normal MATLAB code, we can declare an abstract function.</p><pre class="codeinput">syms <span class="string">f(x)</span>
+</pre><img vspace="5" hspace="5" src="matlabTutorial_08.png" alt=""> <p>For some of the reverse trajectories, we get a warning because either <img src="matlabTutorial_eq43551.png" alt="$x$"> is changing very slowly (near the unstable <img src="matlabTutorial_eq52163.png" alt="$x=4$"> fixed point), or <img src="matlabTutorial_eq43551.png" alt="$x$"> is changing very quickly (as it decreases without bound towards negative infinity).</p><h2>Symbolic computation<a name="48"></a></h2><p>Your version of MATLAB might include support for symbolic computation. While Mathematica is a more common choice for doing symbolic computations, we'll go through an example here to introduce the MATLAB equivalent.</p><p>using syntax which is strangely divergent from normal MATLAB code, we can declare an abstract function.</p><pre class="codeinput">syms <span class="string">f(x)</span>
 f
 x
 </pre><pre class="codeoutput"> 
@@ -544,24 +567,36 @@ yt(b, t) =
  
 b*exp(-t^2/2)
  
-</pre><img vspace="5" hspace="5" src="matlabTutorial_08.png" alt=""> <p>This example is taken nearly directly from the help files; for more information and tutorials, open the MATLAB desktop Help Browser, and search for "Symbolic Computation".</p><h2>Debugging<a name="54"></a></h2><p>It's often useful to inspect the state of a program at a particular point deep in a called function. To this end, you can set break points by clicking the <tt>-</tt> sign in the left margin of a line in the editor, to the right of the line numbers.</p><p><img vspace="5" hspace="5" src="setBreakpoint.png" alt=""> </p><p>When you run a script which calls this code, assuming you did not call <tt>clear all</tt>, which clears both variables and breakpoints, the interpreter will stop when this line is reached, and indicate this state with both a green arrow in the margin of this code ...</p><p><img vspace="5" hspace="5" src="atBreakpoint.png" alt=""> </p><p>... and a <tt>K</tt> before your interactive prompt in the Command Window.</p><p><img vspace="5" hspace="5" src="commandWindowDebugging.png" alt=""> </p><p>At this point, you can <tt>disp</tt> out or modify variables and expressions. In newer versions of MATLAB, the "EDITOR" tab will contain buttons for continuing to the next breakpoint, stepping to the next line of code, stepping into the function about to be called, etc.</p><p><img vspace="5" hspace="5" src="debugButtons.png" alt=""> </p><p>To quit debug mode, either press the continue button (or keyboard shortcut) (and possibly also clear your breakpoints), press the "Quit Debugging" button, or enter the command <tt>dbquit</tt> in thie Command Window.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="matlabTutorial_09.png" alt=""> <p>This example is taken nearly directly from the help files; for more information and tutorials, open the MATLAB desktop Help Browser, and search for "Symbolic Computation".</p><h2>Debugging<a name="56"></a></h2><p>It's often useful to inspect the state of a program at a particular point deep in a called function. To this end, you can set break points by clicking the <tt>-</tt> sign in the left margin of a line in the editor, to the right of the line numbers.</p><p><img vspace="5" hspace="5" src="setBreakpoint.png" alt=""> </p><p>When you run a script which calls this code, assuming you did not call <tt>clear all</tt>, which clears both variables and breakpoints, the interpreter will stop when this line is reached, and indicate this state with both a green arrow in the margin of this code ...</p><p><img vspace="5" hspace="5" src="atBreakpoint.png" alt=""> </p><p>... and a <tt>K</tt> before your interactive prompt in the Command Window.</p><p><img vspace="5" hspace="5" src="commandWindowDebugging.png" alt=""> </p><p>At this point, you can <tt>disp</tt> out or modify variables and expressions. In newer versions of MATLAB, the "EDITOR" tab will contain buttons for continuing to the next breakpoint, stepping to the next line of code, stepping into the function about to be called, etc.</p><p><img vspace="5" hspace="5" src="debugButtons.png" alt=""> </p><p>To quit debug mode, either press the continue button (or keyboard shortcut) (and possibly also clear your breakpoints), press the "Quit Debugging" button, or enter the command <tt>dbquit</tt> in thie Command Window.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% MATLAB Tutorial for Differential Equations
+
+%%
 % *DISCLAIMER*
+%
 % Almost everything you can do in MATLAB, you can do in Python, for free,
 % with the addition of the packages NumPy, SciPy, and Matplotlib (and SymPy
 % for the symbolic stuff). While MATLAB may be free to you now 
-% while you're a student, it may not be once you
-% graduate. MATLAB is, as its name suggests, best suited to matrix
+% while you're a student, it probably will not be once you
+% graduate. Further, MATLAB is, as its name suggests, best suited to matrix
 % computations. It is not a very good general-purpose programming language,
-% and many of its misfeatures are baked in by a need for backwards
+% and many of its misfeatures are made permanent by a need for backwards
 % compatibility with 32 years worth of legacy scripts.
-% While MATLAB is still the most commonly used language in many
-% regions of academia, you may want to investigate other languages if you
+% So, while MATLAB is still the most commonly used language in many
+% regions of academia, and so is an essential skill
+% for any scientific/industrial programmer,
+% you may want to investigate other languages if you
 % decide you want to do any programming outside of this class.
 %
 % The script which generates this document is uploaded at
-% <http://github.com/tsbertalan/matlabTutorial>.
+% <http://github.com/tsbertalan/matlabTutorial>, and the rendered HTML
+% version is visible at
+% <https://rawgit.com/tsbertalan/matlabTutorial/master/html/matlabTutorial.html rawgit.com>
+% or
+% <https://htmlpreview.github.io/?https://github.com/tsbertalan/matlabTutorial/blob/master/html/matlabTutorial.html htmlpreview.github.io>.
+
+% Make this script's results exactly reproducible.
+close all; clear all; rng(4);
 
 %% Basics
 % Statements can be closed with a semicolon,
@@ -621,6 +656,9 @@ fprintf('%.2f', sum(xvalues));
 % 
 % <<fprintfHelp.png>>
 % 
+% The fact that the help for |fprintf| is _just a little bit_ wrong
+% (in our simple usage, |fprintf| writes to standard out, 
+% not to a text file as claimed) is just a fun bonus.
 
 %%
 % Standard flow control constructs are available.
@@ -867,7 +905,7 @@ squaringHandle(2)
 %
 % _*Numerically integrate a single linear ODE.*_
 %
-% Lets define a simple 1D ODE. The built-in integrators expect your
+% Let's define a simple 1D ODE. The built-in integrators expect your
 % right-hand-side (RHS) function to take two arguments, the current time,
 % and the current state. This allows you to have time-dependent effects,
 % such as nonautomous forcing. For now, we'll just ignore the t argument.
@@ -889,7 +927,7 @@ xlabel('t');
 ylabel('x(t)');
 
 %%
-% _*Numerically integrate a pair of coupled linear ODEs.*_
+% _*Numerically integrate a pair of coupled linear ODEs and plot the phase portrait.*_
 %
 % We can also use a pair of linear ODEs.
 %
@@ -945,7 +983,7 @@ ylabel('y');
 title('Trajectories move from black to white points.');
 
 %%
-% _*Numerically integrate a pair of nonlinear ODEs.*_
+% _*Numerically integrate a pair of nonlinear ODEs and plot the phase portrait.*_
 %
 % Let's try a nonlinear system. In particular we can use two ODEs for a Van
 % der Pol oscillator, which happen to be a stiff system. Because of this
@@ -976,11 +1014,53 @@ xlabel('y_1(t)');
 ylabel('y_2(t)');
 
 %%
+% *Numerically integrate a large nonlinear system of ODEs.*
+%
 % Of course, you can integrate dynamics of arbitrary complexity and number of
 % variablesREPLACE_WITH_DASH_DASHall the integrators such as |ode45| or |ode23s| require is a
 % handle to right-hand-side function. This you could write in a separte
 % file, and use the |@| prefix to make a function handle out of the name of
 % this external function, allowing you to define many-line RHS functions.
+%
+% Let's define a system of coupled oscillators as 
+% 
+% $$\dot \theta_i = \omega_i + \frac{K}{N} \sum_{j=1}^N \sin(\theta_j - \theta_i)$$
+% 
+% For, say, $N=128$ . I'll define the right-hand-side function in a separate
+% file, but it will look like this:
+% 
+%   function dTdt = coupledOscRHS(thetas, omegas, K)
+%       N = numel(thetas);
+% 
+%       dTdt = zeros(size(thetas));
+%       for i=1:N
+%           dTdt(i) = 0;
+%           for j=1:N
+%               dTdt(i) = dTdt(i) + sin(thetas(j) - thetas(i));
+%           end
+%           dTdt(i) = omegas(i) + K/N * dTdt(i);
+%       end
+%   end
+%
+% Since our RHS function does not take a time and a state, as required,
+% we'll wrap it in an anonymous function, baking in our chosen paramemters
+% (a construction called a closure).
+N = 128;
+omegas = rand(N, 1) * 0.1;
+omegas = omegas - mean(omegas);
+K = 0.25;
+rhs = @(unused_t, thetas) coupledOscRHS(thetas, omegas, K);
+%%
+% We'll start with a random initial condition, make a trajectory, then plot
+% all the oscillators' phase angles over time.
+ic = rand(N, 1) * pi - pi/2;
+[T, X] = ode45(rhs, [0, 10], ic);
+figure();
+plot(T, X, 'black');
+xlabel('t')
+ylabel({'\theta_i(t)'; sprintf('for i=1,2,...,%d', N)});
+
+
 
 %% Find eigenvalues and eigenvectors.
 % Previously, we defined a pair of linear ODEs in terms of a coefficient

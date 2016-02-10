@@ -1,19 +1,31 @@
 %% MATLAB Tutorial for Differential Equations
+
+%%
 % *DISCLAIMER*
+%
 % Almost everything you can do in MATLAB, you can do in Python, for free,
 % with the addition of the packages NumPy, SciPy, and Matplotlib (and SymPy
 % for the symbolic stuff). While MATLAB may be free to you now 
-% while you're a student, it may not be once you
-% graduate. MATLAB is, as its name suggests, best suited to matrix
+% while you're a student, it probably will not be once you
+% graduate. Further, MATLAB is, as its name suggests, best suited to matrix
 % computations. It is not a very good general-purpose programming language,
-% and many of its misfeatures are baked in by a need for backwards
+% and many of its misfeatures are made permanent by a need for backwards
 % compatibility with 32 years worth of legacy scripts.
-% While MATLAB is still the most commonly used language in many
-% regions of academia, you may want to investigate other languages if you
+% So, while MATLAB is still the most commonly used language in many
+% regions of academia, and so is an essential skill
+% for any scientific/industrial programmer,
+% you may want to investigate other languages if you
 % decide you want to do any programming outside of this class.
 %
 % The script which generates this document is uploaded at
-% <http://github.com/tsbertalan/matlabTutorial>.
+% <http://github.com/tsbertalan/matlabTutorial>, and the rendered HTML
+% version is visible at
+% <https://rawgit.com/tsbertalan/matlabTutorial/master/html/matlabTutorial.html rawgit.com>
+% or
+% <https://htmlpreview.github.io/?https://github.com/tsbertalan/matlabTutorial/blob/master/html/matlabTutorial.html htmlpreview.github.io>.
+
+% Make this script's results exactly reproducible.
+close all; clear all; rng(4);
 
 %% Basics
 % Statements can be closed with a semicolon,
@@ -73,6 +85,9 @@ fprintf('%.2f', sum(xvalues));
 % 
 % <<fprintfHelp.png>>
 % 
+% The fact that the help for |fprintf| is _just a little bit_ wrong
+% (in our simple usage, |fprintf| writes to standard out, 
+% not to a text file as claimed) is just a fun bonus.
 
 %%
 % Standard flow control constructs are available.
@@ -319,7 +334,7 @@ squaringHandle(2)
 %
 % _*Numerically integrate a single linear ODE.*_
 %
-% Lets define a simple 1D ODE. The built-in integrators expect your
+% Let's define a simple 1D ODE. The built-in integrators expect your
 % right-hand-side (RHS) function to take two arguments, the current time,
 % and the current state. This allows you to have time-dependent effects,
 % such as nonautomous forcing. For now, we'll just ignore the t argument.
@@ -428,11 +443,51 @@ xlabel('y_1(t)');
 ylabel('y_2(t)');
 
 %%
+% *Numerically integrate a large nonlinear system of ODEs.*
+%
 % Of course, you can integrate dynamics of arbitrary complexity and number of
 % variables--all the integrators such as |ode45| or |ode23s| require is a
 % handle to right-hand-side function. This you could write in a separte
 % file, and use the |@| prefix to make a function handle out of the name of
 % this external function, allowing you to define many-line RHS functions.
+%
+% Let's define a system of coupled oscillators as 
+% 
+% $$\dot \theta_i = \omega_i + \frac{K}{N} \sum_{j=1}^N \sin(\theta_j - \theta_i)$$
+% 
+% For, say, $N=128$ . I'll define the right-hand-side function in a separate
+% file, but it will look like this:
+% 
+%   function dTdt = coupledOscRHS(thetas, omegas, K)
+%       N = numel(thetas);
+% 
+%       dTdt = zeros(size(thetas));
+%       for i=1:N
+%           dTdt(i) = 0;
+%           for j=1:N
+%               dTdt(i) = dTdt(i) + sin(thetas(j) - thetas(i));
+%           end
+%           dTdt(i) = omegas(i) + K/N * dTdt(i);
+%       end
+%   end
+%
+% Since our RHS function does not take a time and a state, as required,
+% we'll wrap it in an anonymous function, baking in our chosen paramemters
+% (a construction called a closure).
+N = 128;
+omegas = rand(N, 1) * 0.1;
+omegas = omegas - mean(omegas);
+K = 0.25;
+rhs = @(unused_t, thetas) coupledOscRHS(thetas, omegas, K);
+%%
+% We'll start with a random initial condition, make a trajectory, then plot
+% all the oscillators' phase angles over time.
+ic = rand(N, 1) * pi - pi/2;
+[T, X] = ode45(rhs, [0, 10], ic);
+figure();
+plot(T, X, 'black');
+xlabel('t')
+ylabel({'\theta_i(t)'; sprintf('for i=1,2,...,%d', N)});
 
 
 
