@@ -395,6 +395,7 @@ for replicate=1:numTrajectories
             'MarkerEdgeColor', 'black', 'MarkerFaceColor', 'white'...
             );
     plot(states(:, 1), states(:, 2), 'k');
+    drawnow();
 end
 [X, Y] = meshgrid(-1:.25:1, -1:.25:1);
 gridShape = size(X);
@@ -455,7 +456,8 @@ ylabel('y_2(t)');
 %       Y(1,:) = y0;
 %       for i=2:numel(T)
 %           dydtHere = dydt(T(i-1,:), Y(i-1,:));
-%           Y(i, :) = Y(i-1, :) + (T(i) - T(i-1)) * reshape(dydtHere, [1, numel(y0)]);
+%           Y(i, :) = Y(i-1, :) + (T(i) - T(i-1)) * ...
+%                     reshape(dydtHere, [1, numel(y0)]);
 %       end
 %   end
 % 

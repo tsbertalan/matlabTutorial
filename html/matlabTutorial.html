@@ -374,6 +374,7 @@ trajectories = zeros(numel(times), 2, numTrajectories);
             <span class="string">'MarkerEdgeColor'</span>, <span class="string">'black'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'white'</span><span class="keyword">...</span>
             );
     plot(states(:, 1), states(:, 2), <span class="string">'k'</span>);
+    drawnow();
 <span class="keyword">end</span>
 [X, Y] = meshgrid(-1:.25:1, -1:.25:1);
 gridShape = size(X);
@@ -417,7 +418,8 @@ ylabel(<span class="string">'y_2(t)'</span>);
     Y(1,:) = y0;
     <span class="keyword">for</span> i=2:numel(T)
         dydtHere = dydt(T(i-1,:), Y(i-1,:));
-        Y(i, :) = Y(i-1, :) + (T(i) - T(i-1)) * reshape(dydtHere, [1, numel(y0)]);
+        Y(i, :) = Y(i-1, :) + (T(i) - T(i-1)) * <span class="keyword">...</span>
+                  reshape(dydtHere, [1, numel(y0)]);
     <span class="keyword">end</span>
 <span class="keyword">end</span>
 </pre><p>We'll use a fine timestep of <img src="matlabTutorial_eq68982.png" alt="$\delta t = 0.0004$">. It so happens that, for <img src="matlabTutorial_eq58498.png" alt="$\delta t = 0.0001$">, the integration goes well until it hits the slow portion of the dynamics, where the fine timestep is a liability.  But we'll use the slightly larger (fixed) timestep for now to show the more egregious problem with Euler for stiff systems.</p><pre class="codeinput"><span class="keyword">for</span> i=1:min(numReps, 4)
@@ -1019,6 +1021,7 @@ for replicate=1:numTrajectories
             'MarkerEdgeColor', 'black', 'MarkerFaceColor', 'white'...
             );
     plot(states(:, 1), states(:, 2), 'k');
+    drawnow();
 end
 [X, Y] = meshgrid(-1:.25:1, -1:.25:1);
 gridShape = size(X);
@@ -1079,7 +1082,8 @@ ylabel('y_2(t)');
 %       Y(1,:) = y0;
 %       for i=2:numel(T)
 %           dydtHere = dydt(T(i-1,:), Y(i-1,:));
-%           Y(i, :) = Y(i-1, :) + (T(i) - T(i-1)) * reshape(dydtHere, [1, numel(y0)]);
+%           Y(i, :) = Y(i-1, :) + (T(i) - T(i-1)) * ...
+%                     reshape(dydtHere, [1, numel(y0)]);
 %       end
 %   end
 % 
