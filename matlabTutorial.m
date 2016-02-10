@@ -429,11 +429,13 @@ dydt = @(t, y) [y(2); 1000*(1-y(1)^2)*y(2)-y(1)];  % See vdp1000.m, which comes 
 numReps = 25;
 initialConditions = [rand(numReps, 1)*5-2.5, ...
                      rand(numReps, 1)*3000-1500];
+                 
 for i=1:numReps
     y0 = initialConditions(i, :);
-    [T,Y] = ode23s(dydt,[0 3000], y0);
+    [unused_T,Y] = ode23s(dydt, [0 3000], y0);
     plot(Y(:, 1), Y(:, 2), 'k-')
     scatter(Y(1, 1), Y(1, 2), 'ko', 'MarkerFaceColor', 'black');
+    drawnow
 end
 
 % Let's plot the attracting limit cycle as well.
@@ -442,6 +444,37 @@ plot(Y(:, 1), Y(:, 2), 'red', 'LineWidth', 4)
 
 xlabel('y_1(t)');
 ylabel('y_2(t)');
+
+%%
+% Let's see just how bad Euler integration really is for this problem.
+% The simple Euler integration implementation we'll use looks like this:
+% 
+%   function [T, Y] = eulerIntegration(dydt, T, y0)
+%       T = reshape(T, [numel(T), 1]);
+%       Y = zeros(nsumel(T), numel(y0));
+%       Y(1,:) = y0;
+%       for i=2:numel(T)
+%           dydtHere = dydt(T(i-1,:), Y(i-1,:));
+%           Y(i, :) = Y(i-1, :) + (T(i) - T(i-1)) * reshape(dydtHere, [1, numel(y0)]);
+%       end
+%   end
+% 
+% We'll use a fine timestep of $\delta t = 0.0004$. It so happens that, for
+% $\delta t = 0.0001$, the integration goes well until it hits the slow
+% portion of the dynamics, where the fine timestep is a liability.  But
+% we'll use the slightly larger (fixed) timestep for now to show the more
+% egregious problem with Euler for stiff systems.
+%
+
+for i=1:min(numReps, 4)
+    y0 = initialConditions(i, :);
+    [unused_T,Y] = eulerIntegration(dydt,0:0.0004:20, y0);
+    plot(Y(:, 1), Y(:, 2), 'g-', 'LineWidth', 2)
+    xlim([-3.5, 3.5]);
+    ylim([-3000, 3000]);
+    drawnow
+end
+
 
 %%
 % *Numerically integrate a large nonlinear system of ODEs.*
